@@ -1,4 +1,4 @@
-import { Atom, Search, Globe, GlobeLock, Sparkles, Umbrella, ArrowRight, Paperclip, HelpCircle } from 'lucide-react'
+import { Atom, Search, Globe, GlobeLock, Sparkles, Umbrella, ArrowRight, HelpCircle } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Card } from "@/components/ui/card"
@@ -17,14 +17,12 @@ const HomeSearch = () => {
 
                       {/* Search Input */}
                       <div className="relative">
-                          <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-2">
-                              <Paperclip className="w-4 h-4" />
-                              <div className="h-6 w-px bg-zinc-700" />
+                          <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-3">
                               <Search className="w-4 h-4" />
                           </div>
                           <Input
                               placeholder="Search for anything..."
-                              className="w-full rounded-lg py-6 pl-16 pr-32"
+                              className="w-full rounded-lg py-6 pl-10 pr-32"
                           />
                           <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
                               <div className="h-6 w-px bg-zinc-700" />
