@@ -24,8 +24,9 @@ const Signin = () => {
             console.log(res.data)
             toast.success("Logged in successfully")
             localStorage.setItem('token', res.data.token)
+            localStorage.setItem('spaceUser', res.data.user);
         }).catch((err) => {
-            toast.error(err.response.data.message)
+            toast.error(err.response.data.errors)
             console.log(err.response.data)
         })
     }
@@ -42,6 +43,7 @@ const Signin = () => {
                         type="email"
                         id="email"
                         placeholder="Enter your email"
+                        required
                     />
                 </div>
                 <div className="mb-4">
@@ -51,6 +53,7 @@ const Signin = () => {
                         type="password"
                         id="password"
                         placeholder="Enter your password"
+                        required
                     />
                 </div>
             </div>

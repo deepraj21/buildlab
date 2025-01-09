@@ -24,6 +24,7 @@ const Signup = () => {
             console.log(res.data)
             toast.success(res.data.message)
             localStorage.setItem('token', res.data.token)
+            localStorage.setItem('spaceUser', res.data.user)
         }).catch((err) => {
             toast.error(err.response.data.message)
             console.log(err.response.data)

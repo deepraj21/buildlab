@@ -36,7 +36,6 @@ const SpaceNameDisplay = () => {
                           className='font-semibold'
                       >{project.name}</h2> */}
                       <div className="md:w-16 md:h-16 w-10 h-10 flex items-center justify-center my-auto rounded-[10px] dark:bg-zinc-900 bg-stone-100">
-                          
                           <span className="text-sm text-foreground">
                               {project.name.slice(0, 2).toUpperCase()}
                           </span>

@@ -49,10 +49,9 @@ const DesktopSidebar = () => {
                 </div>
             </div>
             <div className='w-[80%] border-b border-zinc-500'></div>
-            <div className='flex-grow overflow-y-scroll'>
+            <div className='overflow-y-scroll' style={{ height: 'calc(50vh - 20px)' }}>
                 <SpaceNameDisplay/>
             </div>
-            <div className='h-[100px] bottom-2'></div>
             <div className='w-fit flex flex-col items-center absolute bottom-2'>
                 <div className=''>
                     <Button variant='outline' className='dark:border-zinc-700 rounded-full h-10 w-10'>

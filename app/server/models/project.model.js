@@ -22,8 +22,24 @@ const projectSchema = new mongoose.Schema({
         type: Object,
         default: {}
     },
+    chats: [
+        {
+            email: {
+                type: String,
+                required: true
+            },
+            message: {
+                type: String,
+                required: true
+            },
+            timestamp: {
+                type: Date,
+                default: Date.now
+            },
+        }
+    ]
 
-})
+},{ timestamps: true })
 
 const Project = mongoose.model('project', projectSchema)
 
