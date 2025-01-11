@@ -15,10 +15,11 @@ const DesktopSidebar = () => {
     const navigate = useNavigate()
     const isLoggedIn = localStorage.getItem('token');
     useEffect(() => {
+        <SpaceNameDisplay />
     }, [isLoggedIn])
     
     return (
-        <div className="md:w-24 w-20 md:flex flex-col items-center py-2 space-y-6 hidden">
+        <div className="md:w-24 w-20 flex flex-col items-center py-2 space-y-6">
             <div className=' pt-2 cursor-pointer' onClick={() => navigate('/')}>
                 <Atom className="w-12 h-12 hover:scale-110 transition ease-in-out duration-300" strokeWidth={1.3}/>
                 <span className='text-[14px] p-1 hidden md:block'>space</span>
