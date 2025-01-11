@@ -17,8 +17,14 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { EllipsisVertical, Search, MessageSquareLock, ArrowUp } from 'lucide-react';
+import { EllipsisVertical, Search, MessageSquareLock, ArrowUp, PlusCircle, X, MinusCircle } from 'lucide-react';
 import { Badge } from "@/components/ui/badge"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const md: MarkdownIt = new MarkdownIt({
     html: true,
@@ -49,6 +55,7 @@ interface Project {
     _id: string;
     name: string;
     users: User[];
+    description: string;
     fileTree: FileTree;
 }
 
@@ -192,19 +199,46 @@ const SpaceComponent: React.FC = () => {
                                 <Sheet>
                                     <SheetTrigger><span className='text-[10px]'>tap here for space info</span></SheetTrigger>
                                     <SheetContent>
-                                        <SheetHeader>
-                                            <SheetTitle>Are you absolutely sure?</SheetTitle>
-                                            <SheetDescription>
-                                                <SpaceInfo/>
-                                            </SheetDescription>
+                                        <SheetHeader className='border-b p-4'>
+                                            <SheetTitle className='flex flex-col items-center justify-center'>
+                                                <div className="md:w-24 md:h-24 w-24 h-24 flex items-center justify-center my-auto rounded-full dark:bg-zinc-800 bg-stone-100">
+                                                    <span className="text-sm text-foreground">
+                                                        {project.name.slice(0, 2).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                                <span>{project.name}</span>
+                                            </SheetTitle>
                                         </SheetHeader>
+                                        <SheetDescription className='p-4 flex flex-col border-b'>
+                                            <span className='text-[26px] pb-4'>Description:</span>
+                                            {
+                                                project.description ? <span>{project.description}</span> : <span>No Description found</span>
+                                            }
+                                        </SheetDescription>
+                                        <SheetDescription className='p-4 flex flex-col'>
+                                            <span className='text-[26px] pb-4'>Collabrators:</span>
+                                            <SpaceInfo />
+                                        </SheetDescription>
                                     </SheetContent>
                                 </Sheet>
                         </div>
                     </div>
                     <div>
                         <Button variant="ghost" size='sm' className='rounded-full w-10 h-10'><Search /></Button>
-                        <Button variant="ghost" size='sm' className='rounded-full w-10 h-10'><EllipsisVertical/></Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    <Button variant="ghost" size='sm' className='rounded-full w-10 h-10'><EllipsisVertical /></Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem className='cursor-pointer' onClick={() => { setIsModalOpen(true) }} >
+                                        <PlusCircle />
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className='cursor-pointer' >
+                                        <MinusCircle />
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        
                     </div>
                 </div>
 
@@ -323,14 +357,14 @@ const SpaceComponent: React.FC = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <Card className="w-96 max-w-full">
-                        <CardHeader>
-                            <CardTitle>Select User</CardTitle>
+                        <CardHeader className='flex flex-row items-center border-b justify-between'>
+                            <CardTitle>Add User to {project.name}</CardTitle>
                             <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)}>
-                                <i className="ri-close-line" />
+                                <X/>
                             </Button>
                         </CardHeader>
                         <CardContent>
-                            <ScrollArea className="h-[300px]">
+                            <ScrollArea className="h-[300px] pt-4">
                                 <div className="space-y-2">
                                     {users.map((user) => (
                                         <Button
@@ -376,12 +410,12 @@ function SpaceInfo() {
     return (
         <div>
             <ScrollArea className="h-full">
-                <div className="p-4 space-y-4">
+                <div className="space-y-4">
                     {project.users && project.users.length > 0 ? (
                         project.users.map((user) => (
                             <div key={user._id} className="flex items-center space-x-4">
                                 <Avatar>
-                                    <AvatarFallback>{user.email}</AvatarFallback>
+                                    <AvatarFallback>{user.email[0]}</AvatarFallback>
                                 </Avatar>
                                 <div>
                                     <p className="text-sm font-medium">{user.email}</p>
