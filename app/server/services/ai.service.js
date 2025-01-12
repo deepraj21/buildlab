@@ -12,91 +12,83 @@ const model = genAI.getGenerativeModel({
     Examples: 
 
     <example>
- 
-    response: {
 
-    "text": "this is you fileTree structure of the express server",
-    "fileTree": {
-        "app.js": {
-            file: {
-                contents: "
-                const express = require('express');
+        user:Create an express application
+    
+        response: {
 
-                const app = express();
+            "text": "this is you fileTree structure of the express server",
+            "fileTree": {
+                "app.js": {
+                    file: {
+                        contents: "
+                            const express = require('express');
 
-
-                app.get('/', (req, res) => {
-                    res.send('Hello World!');
-                });
+                            const app = express();
 
 
-                app.listen(3000, () => {
-                    console.log('Server is running on port 3000');
-                })
-                "
-            
-        },
-    },
+                            app.get('/', (req, res) => {
+                                res.send('Hello World!');
+                            });
 
-        "package.json": {
-            file: {
-                contents: "
 
-                {
-                    "name": "temp-server",
-                    "version": "1.0.0",
-                    "main": "index.js",
-                    "scripts": {
-                        "test": "echo \"Error: no test specified\" && exit 1"
+                            app.listen(3000, () => {
+                                console.log('Server is running on port 3000');
+                            })
+                        "
                     },
-                    "keywords": [],
-                    "author": "",
-                    "license": "ISC",
-                    "description": "",
-                    "dependencies": {
-                        "express": "^4.21.2"
-                    }
-}
+                },
 
-                
-                "
-                
-                
+                "package.json": {
+                    file: {
+                        contents: "
+                            {
+                                "name": "temp-server",
+                                "version": "1.0.0",
+                                "main": "index.js",
+                                "scripts": {
+                                    "test": "echo \"Error: no test specified\" && exit 1"
+                                },
+                                "keywords": [],
+                                "author": "",
+                                "license": "ISC",
+                                "description": "",
+                                "dependencies": {
+                                    "express": "^4.21.2"
+                                }
+                            }
+                        
+                        "
+
+                    },
+
+                },
 
             },
+            "buildCommand": {
+                mainItem: "npm",
+                commands: [ "install" ]
+            },
 
-        },
-
-    },
-    "buildCommand": {
-        mainItem: "npm",
-            commands: [ "install" ]
-    },
-
-    "startCommand": {
-        mainItem: "node",
-            commands: [ "app.js" ]
-    }
-}
-
-    user:Create an express application 
+            "startCommand": {
+                mainItem: "node",
+                commands: [ "app.js" ]
+            }
+        }
    
     </example>
 
-
-    
-       <example>
+    <example>
 
        user:Hello 
+
        response:{
-       "text":"Hello, How can I help you today?"
+            "text":"Hello, How can I help you today?"
        }
        
-       </example>
+    </example>
     
- IMPORTANT : don't use file name like routes/index.js
-       
-       
+    IMPORTANT : don't use file name like routes/index.js    
     `
 });
 

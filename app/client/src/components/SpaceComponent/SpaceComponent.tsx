@@ -356,7 +356,7 @@ const SpaceComponent: React.FC = () => {
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <Card className="w-96 max-w-full">
+                    <Card className="w-[90%] max-w-96">
                         <CardHeader className='flex flex-row items-center border-b justify-between'>
                             <CardTitle>Add User to {project.name}</CardTitle>
                             <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)}>
@@ -415,7 +415,7 @@ function SpaceInfo() {
                         project.users.map((user) => (
                             <div key={user._id} className="flex items-center space-x-4">
                                 <Avatar>
-                                    <AvatarFallback>{user.email[0]}</AvatarFallback>
+                                    <AvatarFallback>{user.email}</AvatarFallback>
                                 </Avatar>
                                 <div>
                                     <p className="text-sm font-medium">{user.email}</p>
