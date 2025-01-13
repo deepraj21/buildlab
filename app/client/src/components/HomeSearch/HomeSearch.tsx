@@ -11,9 +11,14 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
+import {
+    Drawer,
+    DrawerContent,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTrigger,
+} from "@/components/ui/drawer"
 import { useEffect, useState, useRef } from "react";
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SchemaType } from "@google/generative-ai";
 import { LinkPreviewFetcher } from "./link-preview-fetcher";
@@ -56,8 +61,6 @@ const HomeSearch = () => {
     }
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-    
 
     const handleSearch = async () => {
         if (!searchQuery.trim()) return;
@@ -251,16 +254,46 @@ const HomeSearch = () => {
                                                                                             {file.name}
                                                                                         </span>
                                                                                     </div>
-                                                                                    <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline" onClick={() => {
+                                                                                    <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline hidden md:block" onClick={() => {
                                                                                         setSelectedFile(file);
                                                                                         setSplitView(true);
                                                                                     }}>
-                                                                                        {/* <span>open</span> */}
                                                                                         <ArrowUpRightSquare className="h-4 w-4" />
                                                                                     </div>
+                                                                                    <Drawer>
+                                                                                        <DrawerTrigger className="md:hidden block">
+                                                                                            <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline" onClick={() => {
+                                                                                                setSelectedFile(file);
+                                                                                                setSplitView(true);
+                                                                                            }}>
+                                                                                                <ArrowUpRightSquare className="h-4 w-4" />
+                                                                                            </div>
+                                                                                        </DrawerTrigger>
+                                                                                        <DrawerContent className="bg-zinc-900">
+                                                                                            <DrawerHeader>
+                                                                                                <DrawerDescription>
+                                                                                                    <div className="border-b w-full">
+                                                                                                        <div className="flex flex-row border-t border-r border-l w-fit items-center gap-2 pt-1 pb-1 pl-1 pr-1 bg-muted/50 rounded-t-md">
+                                                                                                            <h2 className="text-md">{selectedFile?.name}</h2>
+                                                                                                            <X className="h-4 w-4" />
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <div className="h-[60vh] overflow-auto justify-start ">
+                                                                                                        <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight}>
+                                                                                                            {selectedFile?.content || ""}
+                                                                                                        </SyntaxHighlighter>
+                                                                                                    </div>
+                                                                                                </DrawerDescription>
+                                                                                            </DrawerHeader>
+                                                                                           
+                                                                                        </DrawerContent>
+                                                                                    </Drawer>
                                                                                 </div>
                                                                             </div>
+                                                                            
                                                                         </div>
+                                                                        
                                                                     ))}
                                                                 </div>
                                                             </div>
