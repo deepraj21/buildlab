@@ -7,7 +7,11 @@ import {
     ArrowDown,
     Code,
     ArrowUpRightSquare,
-    X
+    X,
+    Timer,
+    CalendarDays,
+    Copy,
+    Download
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,6 +34,7 @@ import {
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import ProfileHeader from "./ProfileHeader";
+import { toast } from "sonner";
 
 interface Results {
     text: string;
@@ -43,10 +48,12 @@ interface Results {
 interface Chats {
     query: string;
     response: Results;
+    responseTime: number;
+    timestamp: Date;
 }
 
 const HomeSearch = () => {
-    
+
     const [searchQuery, setSearchQuery] = useState("");
     const [chatHistory, setChatHistory] = useState<Chats[]>([]);
     const [loading, setLoading] = useState(false);
@@ -61,6 +68,64 @@ const HomeSearch = () => {
     }
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [openedFiles, setOpenedFiles] = useState<Set<File>>(new Set());
+
+    const handleFileSelect = (file: File) => {
+        setSelectedFile(file);
+        setOpenedFiles((prevFiles) => new Set(prevFiles).add(file));
+    };
+
+    const handleFileClose = (file: File) => {
+        setOpenedFiles((prevFiles) => {
+            const newFiles = new Set(prevFiles);
+            newFiles.delete(file);
+            return newFiles;
+        });
+        if (selectedFile === file) {
+            setSelectedFile(null);
+        }
+    };
+
+    const copyChatToClipboard = (chat: Chats) => {
+        const chatText = JSON.stringify(chat, null, 2);
+        navigator.clipboard.writeText(chatText).then(() => {
+            toast.success('Chat copied to clipboard');
+        }).catch((err) => {
+            console.error('Failed to copy chat to clipboard:', err);
+            toast.error('Failed to copy chat to clipboard');
+        });
+    };
+
+    const downloadChatAsJson = (chat: Chats) => {
+        const chatText = JSON.stringify(chat, null, 2);
+        const blob = new Blob([chatText], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${chat.query}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const copyCodeToClipboard = (code: string) => {
+        navigator.clipboard.writeText(code).then(() => {
+            toast.success('Code copied to clipboard');
+        }).catch((err) => {
+            console.error('Failed to copy code to clipboard:', err);
+            toast.error('Failed to copy Code to clipboard');
+        });
+    };
+
+    const downloadCode = (file: File) => {
+        const fileContent = JSON.stringify(file, null, 2);
+        const blob = new Blob([fileContent], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${file.name}`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
 
     const handleSearch = async () => {
         if (!searchQuery.trim()) return;
@@ -117,7 +182,13 @@ const HomeSearch = () => {
 
             NOTE: make sure if question is technical or related to programming, development, coding then provide code snippets every time with proper relevant resources.
             `;
+            const startTime = Date.now();
+
             const result = await model.generateContent(prompt);
+
+            const endTime = Date.now();
+
+            const duration = endTime - startTime;
 
             const structuredResponse = JSON.parse(result.response.text());
             console.log("Structured response:", structuredResponse);
@@ -126,6 +197,8 @@ const HomeSearch = () => {
                 {
                     query: searchQuery,
                     response: structuredResponse,
+                    responseTime: duration,
+                    timestamp: new Date(),
                 },
             ]);
             setSearchQuery("");
@@ -179,7 +252,7 @@ const HomeSearch = () => {
 
                                 {/* Header */}
                                 <header className="fixed flex top-6 right-6 text-sm text-gray-400">
-                                    <ProfileHeader/>
+                                    <ProfileHeader />
                                 </header>
 
                                 {/* Header */}
@@ -211,6 +284,16 @@ const HomeSearch = () => {
                                             {chatHistory.map((chat, index) => (
                                                 <div key={index} className="mb-4">
                                                     <div className="text-[34px] flex flex-row items-center gap-2">{chat.query}</div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <div className="flex gap-1 items-center border bg-muted w-fit pl-1 pr-1 rounded-md">
+                                                            <Timer className="h-3 w-3" />
+                                                            <h2 className="text-[12px]">Response Time: {chat.responseTime}ms</h2>
+                                                        </div>
+                                                        <div className="flex gap-1 border items-center bg-muted w-fit pl-1 pr-1 rounded-md">
+                                                            <CalendarDays className="h-3 w-3" />
+                                                            <h2 className="text-[12px]">{chat.timestamp.toString().split('(')[0].trim()}</h2>
+                                                        </div>
+                                                    </div>
                                                     <div className="pt-6">
                                                         <div className="flex gap-2 items-center">
                                                             <Atom className="h-5 w-5" />
@@ -255,7 +338,7 @@ const HomeSearch = () => {
                                                                                         </span>
                                                                                     </div>
                                                                                     <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline hidden md:block" onClick={() => {
-                                                                                        setSelectedFile(file);
+                                                                                        handleFileSelect(file);
                                                                                         setSplitView(true);
                                                                                     }}>
                                                                                         <ArrowUpRightSquare className="h-4 w-4" />
@@ -263,7 +346,7 @@ const HomeSearch = () => {
                                                                                     <Drawer>
                                                                                         <DrawerTrigger className="md:hidden block">
                                                                                             <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline" onClick={() => {
-                                                                                                setSelectedFile(file);
+                                                                                                handleFileSelect(file);
                                                                                                 setSplitView(true);
                                                                                             }}>
                                                                                                 <ArrowUpRightSquare className="h-4 w-4" />
@@ -273,31 +356,55 @@ const HomeSearch = () => {
                                                                                             <DrawerHeader>
                                                                                                 <DrawerDescription>
                                                                                                     <div className="border-b w-full">
-                                                                                                        <div className="flex flex-row border-t border-r border-l w-fit items-center gap-2 pt-1 pb-1 pl-1 pr-1 bg-muted/50 rounded-t-md">
-                                                                                                            <h2 className="text-md">{selectedFile?.name}</h2>
-                                                                                                            <X className="h-4 w-4" />
+                                                                                                        <div className="flex flex-row w-fit items-center gap-2 bg-muted/30">
+                                                                                                            {Array.from(openedFiles).map((file) => (
+                                                                                                                <div key={file.name} className="flex items-center gap-2 cursor-pointer p-1 border-r" onClick={() => setSelectedFile(file)}>
+                                                                                                                    <h2 className="text-md">{file.name}</h2>
+                                                                                                                    <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} />
+                                                                                                                </div>
+                                                                                                            ))}
                                                                                                         </div>
                                                                                                     </div>
 
-                                                                                                    <div className="h-[60vh] overflow-auto justify-start ">
-                                                                                                        <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight}>
+                                                                                                    <div className="h-[60vh] overflow-y-auto ">
+                                                                                                        <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight} customStyle={{ backgroundColor: 'transparent' }}>
                                                                                                             {selectedFile?.content || ""}
                                                                                                         </SyntaxHighlighter>
+                                                                                                        <div className="pt-4 pl-2 flex flex-row gap-2">
+                                                                                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyCodeToClipboard(selectedFile?.content || "")}>
+                                                                                                                <Copy className="h-3 w-3" />
+                                                                                                                <h2 className="text-[12px]">Copy</h2>
+                                                                                                            </div>
+                                                                                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => { if (selectedFile) downloadCode(selectedFile); }}>
+                                                                                                                <Download className="h-3 w-3" />
+                                                                                                                <h2 className="text-[12px]">Download</h2>
+                                                                                                            </div>
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </DrawerDescription>
                                                                                             </DrawerHeader>
-                                                                                           
+
                                                                                         </DrawerContent>
                                                                                     </Drawer>
                                                                                 </div>
                                                                             </div>
-                                                                            
+
                                                                         </div>
-                                                                        
+
                                                                     ))}
                                                                 </div>
                                                             </div>
                                                         )}
+                                                        <div className="pt-4 flex flex-row gap-2">
+                                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyChatToClipboard(chat)}>
+                                                                <Copy className="h-3 w-3" />
+                                                                <h2 className="text-[12px]">Copy</h2>
+                                                            </div>
+                                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => downloadChatAsJson(chat)}>
+                                                                <Download className="h-3 w-3" />
+                                                                <h2 className="text-[12px]">Download</h2>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <hr className="border-t border-zinc-700 mt-4" />
                                                 </div>
@@ -351,22 +458,36 @@ const HomeSearch = () => {
                             </div>
                         </div>
                     </ResizablePanel>
-                    
+
                     {splitView && (
                         <>
                             <ResizableHandle withHandle className="hidden md:flex" />
                             <ResizablePanel defaultSize={60} minSize={30} className="hidden md:block">
                                 <div className="border-b w-full">
-                                    <div className="flex flex-row border-r w-fit items-center gap-2 pt-1 pb-1 pl-1 pr-1 bg-muted/50">
-                                        <h2 className="text-md">{selectedFile?.name}</h2>
-                                        <X className="h-4 w-4" />
+                                    <div className="flex flex-row w-fit items-center gap-2 bg-muted/30">
+                                        {Array.from(openedFiles).map((file) => (
+                                            <div key={file.name} className="flex items-center gap-2 cursor-pointer p-1 border-r" onClick={() => setSelectedFile(file)}>
+                                                <h2 className="text-md">{file.name}</h2>
+                                                <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} />
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
 
                                 <div className="h-[93vh] overflow-y-auto ">
-                                    <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight}>
+                                    <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight} customStyle={{ backgroundColor: 'transparent' }}>
                                         {selectedFile?.content || ""}
                                     </SyntaxHighlighter>
+                                    <div className="pt-4 pl-2 flex flex-row gap-2">
+                                        <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyCodeToClipboard(selectedFile?.content || "")}>
+                                            <Copy className="h-3 w-3" />
+                                            <h2 className="text-[12px]">Copy</h2>
+                                        </div>
+                                        <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => { if (selectedFile) downloadCode(selectedFile); }}>
+                                            <Download className="h-3 w-3" />
+                                            <h2 className="text-[12px]">Download</h2>
+                                        </div>
+                                    </div>
                                 </div>
                             </ResizablePanel>
                         </>

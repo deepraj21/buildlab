@@ -9,10 +9,11 @@ import CreateSpace from '@/components/CreateSpace/CreateSpace'
 import { Authentication } from '@/components/Auth/Authentication'
 import { useEffect } from 'react'
 import SpaceNameDisplay from '../SpaceNameDisplay/SpaceNameDisplay'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const DesktopSidebar = () => {
     const navigate = useNavigate()
+    const location = useLocation();
     const isLoggedIn = localStorage.getItem('token');
     useEffect(() => {
         <SpaceNameDisplay />
@@ -25,11 +26,11 @@ const DesktopSidebar = () => {
                 <span className='text-[14px] p-1 hidden md:block'>space</span>
             </div>
             <div className='w-full flex flex-col items-center'>
-                <div className='w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer' onClick={() => navigate('/')}>
+                <div className={`w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer ${location.pathname === '/' ? 'border-r-2 dark:border-white border-zinc-900 bg-zinc-900' : ''}`} onClick={() => navigate('/')}>
                     <Search className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
                     <span className='text-[12px] p-1 hidden md:block'>search</span>
                 </div>
-                <div className='w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer' onClick={() => navigate('/explore')}>
+                <div className={`w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer ${location.pathname === '/explore' ? 'border-r-2 dark:border-white border-zinc-900 bg-zinc-900' : ''}`} onClick={() => navigate('/explore')}>
                     <Globe className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300"/>
                     <span className='text-[12px] p-1 hidden md:block'>explore</span>
                 </div>
