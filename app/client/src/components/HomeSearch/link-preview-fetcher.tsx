@@ -23,17 +23,17 @@ export function LinkPreviewFetcher({ url }: { url: string }) {
 
     if (!metadata) {
         return (
-            <div className="max-w-3xl overflow-hidden border rounded-lg shadow-sm bg-muted/50"><a href={url} target="_blank" rel="noopener noreferrer p-2" className="text-blue-500 hover:underline text-sm p-2 w-full truncate">
+            <div className="max-w-[70%] overflow-x-auto border rounded-lg shadow-sm bg-muted/50"><a href={url} target="_blank" rel="noopener noreferrer p-2" className="text-blue-500 hover:underline text-sm pl-2 w-full truncate">
                 {url}
-            </a></div> 
+            </a></div>
         )
     }
 
     return (
-        <div className="max-w-3xl overflow-hidden border rounded-lg shadow-sm bg-muted/50">
-                <div className="flex items-center p-2 border-b">
-                    <div className='flex items-center gap-2'>
-                        {metadata.favicon && (
+        <div className="max-w-[70%] w-full overflow-hidden border rounded-lg shadow-sm bg-muted/50">
+            <div className="flex items-center p-2 border-b">
+                <div className='flex items-center gap-2'>
+                    {metadata.favicon && (
                         <div className="w-4 h-4">
                             <img
                                 src={metadata.favicon}
@@ -41,14 +41,16 @@ export function LinkPreviewFetcher({ url }: { url: string }) {
                                 style={{ objectFit: 'contain' }}
                             />
                         </div>
-                        )}
-                        <h2 className="text-sm w-[180px] truncate">{metadata.title}</h2>
-                    </div>
+                    )}
+                    <h2 className="text-sm w-[180px] truncate">{metadata.title}</h2>
                 </div>
-                <p className="text-sm text-gray-600 mb-2 p-2 w-full truncate">{metadata.description}</p>
-                <a href={url} target="_blank" rel="noopener noreferrer p-2" className="text-blue-500 hover:underline text-sm p-2 w-full truncate">
+            </div>
+            <p className="text-sm text-gray-600 p-2 w-full truncate">{metadata.description}</p>
+            <div className="w-full overflow-x-auto border-t shadow-sm ">
+                <a href={url} target="_blank" rel="noopener noreferrer p-2" className="text-blue-500 hover:underline text-sm p-2 w-full truncate overflow-x-auto">
                     {url}
                 </a>
+            </div>
         </div>
     );
 }

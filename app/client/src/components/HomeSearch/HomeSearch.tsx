@@ -7,6 +7,7 @@ import {
     ArrowLeftCircle,
     Component,
     Code2,
+    ArrowDown
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
     AlertDialog,
     AlertDialogContent,
@@ -48,8 +49,9 @@ const HomeSearch = () => {
     const [chatHistory, setChatHistory] = useState<Chats[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    console.log(error);
+    const [inputDisabled, setInputDisabled] = useState(false);
+    const [showScrollButton, setShowScrollButton] = useState(false);
+    const chatContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const storedUser = localStorage.getItem("spaceUser");
@@ -67,6 +69,7 @@ const HomeSearch = () => {
         if (!searchQuery.trim()) return;
 
         setLoading(true);
+        setInputDisabled(true);
         setError(null);
 
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -100,7 +103,7 @@ const HomeSearch = () => {
 
         try {
             const model = genAI.getGenerativeModel({
-                model: "models/gemini-1.5-pro-002",
+                model: "models/gemini-1.5-flash",
                 generationConfig: {
                     responseMimeType: "application/json",
                     responseSchema: schema,
@@ -128,15 +131,43 @@ const HomeSearch = () => {
                     response: structuredResponse,
                 },
             ]);
-            console.log("Chat history:", chatHistory);
+            setSearchQuery("");
         } catch (err) {
             console.error("Search error:", err);
             setError("Failed to fetch search results. Please try again.");
         } finally {
             setLoading(false);
+            setInputDisabled(false);
         }
     };
 
+    const scrollToBottom = () => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTo({
+                top: chatContainerRef.current.scrollHeight,
+                behavior: "smooth",
+            });
+        }
+    };
+
+    const handleScroll = () => {
+        if (chatContainerRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+            setShowScrollButton(scrollTop < scrollHeight - clientHeight - 100);
+        }
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [chatHistory]);
+
+    useEffect(() => {
+        const chatContainer = chatContainerRef.current;
+        if (chatContainer) {
+            chatContainer.addEventListener("scroll", handleScroll);
+            return () => chatContainer.removeEventListener("scroll", handleScroll);
+        }
+    }, []);
 
     return (
         <div className="pt-2 pr-2 pb-2 w-full">
@@ -182,7 +213,7 @@ const HomeSearch = () => {
                         {
                             chatHistory.length == 0 && (
                                 <div className="transition-opacity duration-500">
-                                    <div className="flex items-center justify-center">
+                                    <div className="flex items-center justify-center mb-12">
                                         <Atom className="w-20 h-20 animate-pulse" strokeWidth={1.3} />
                                     </div>
 
@@ -195,11 +226,18 @@ const HomeSearch = () => {
                         
                         {/* Search Results */}
                         {
+                            error && (
+                                <div className="flex flex-row gap-2 items-center border w-fit p-1 rounded-xl bg-red-700/20 justify-center mx-auto">
+                                    <div className="text-[12px] text-red-700">{error}</div>
+                                </div>
+                            )
+                        }
+                        {
                             chatHistory.length > 0 && (
-                                <div className="mt-8 space-y-4 h-[75vh] overflow-y-auto w-full">
+                                <div className="mt-4 space-y-4 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
                                     {chatHistory.map((chat, index) => (
                                         <div key={index} className="mb-4">
-                                            <div className="text-[34px]">{chat.query}</div>
+                                            <div className="text-[34px] flex flex-row items-center gap-2">{chat.query}</div>
                                             <div className="pt-6">
                                                 <div className="flex gap-2 items-center">
                                                    <Atom className="h-5 w-5" />
@@ -211,7 +249,7 @@ const HomeSearch = () => {
                                                 
                                                 
                                                 {chat.response.resources && (
-                                                    <div className="pt-4">
+                                                    <div className="pt-4 w-[300px]">
                                                         <div className="flex gap-2 items-center">
                                                             <Component className="h-5 w-5" />
                                                             <h2 className="text-xl">Resources:</h2>
@@ -227,7 +265,7 @@ const HomeSearch = () => {
                                                     </div>
                                                 )}
                                                 {chat.response.files && (
-                                                    <div className="pt-4">
+                                                    <div className="pt-4 w-[300px]">
                                                         <div className="flex gap-2 items-center">
                                                             <Code2 className="h-5 w-5" />
                                                             <h2 className="text-xl">Code Files:</h2>
@@ -251,27 +289,40 @@ const HomeSearch = () => {
                         }
 
                         {/* Search Input */}
-                        <div className="relative">
-                            <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-3">
-                                <Search className="w-4 h-4" />
+                        <div className="p-2 rounded-full bg-muted/40">
+                            <div className="relative">
+                                <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-4">
+                                    <Search className="w-4 h-4" />
+                                </div>
+                                <Input
+                                    placeholder="Search..."
+                                    className="w-full rounded-full py-6 pl-10 pr-[55px]"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    disabled={inputDisabled}
+                                />
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
+                                    <Button
+                                        className="w-8 h-8 rounded-full"
+                                        variant="secondary"
+                                        size="sm"
+                                        onClick={handleSearch}
+                                        disabled={loading}
+                                    >
+                                        {loading ? <Atom className="animate-spin" /> : <ArrowUp />}
+                                    </Button>
+                                </div>
+                                {showScrollButton && (
+                                    <Button
+                                        className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
+                                        onClick={scrollToBottom}
+                                        variant='secondary'
+                                    >
+                                        <ArrowDown className="w-4 h-4" />
+                                    </Button>
+                                )}
                             </div>
-                            <Input
-                                placeholder="Search..."
-                                className="w-full rounded-lg py-6 pl-10 pr-[55px]"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
-                                <Button
-                                    className="w-8 h-8"
-                                    variant="secondary"
-                                    size="sm"
-                                    onClick={handleSearch}
-                                    disabled={loading}
-                                >
-                                    {loading ? <Atom className="animate-spin" /> : <ArrowUp />}
-                                </Button>
-                            </div>
+                            
                         </div>
                     </div>   
                 </div>
