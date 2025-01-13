@@ -381,7 +381,7 @@ const HomeSearch = () => {
                                                                                                         </div>
                                                                                                     </div>
 
-                                                                                                    <div className="h-[60vh] overflow-y-auto ">
+                                                                                                    <div className="h-[60vh] w-[95vw] overflow-x-auto overflow-y-auto ">
                                                                                                         <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight} customStyle={{ backgroundColor: 'transparent' }}>
                                                                                                             {selectedFile?.content || ""}
                                                                                                         </SyntaxHighlighter>
@@ -475,10 +475,16 @@ const HomeSearch = () => {
                         </div>
                     </ResizablePanel>
 
-                    {splitView && (
+                    {splitView && openedFiles.size > 0 && (
                         <>
+                            
                             <ResizableHandle withHandle className="hidden md:flex" />
                             <ResizablePanel defaultSize={60} minSize={30} className="hidden md:block">
+                                <motion.div
+                                    initial={{ opacity: 0, x: 50 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5 }}
+                                >
                                 <div className="border-b w-full overflow-x-auto">
                                     <div className="flex flex-row w-fit items-center bg-muted/30">
                                         {Array.from(openedFiles).map((file) => (
@@ -512,7 +518,9 @@ const HomeSearch = () => {
                                         </div>
                                     </div>
                                 </div>
+                                </motion.div>
                             </ResizablePanel>
+                            
                         </>
                     )}
 
