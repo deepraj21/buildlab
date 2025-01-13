@@ -35,6 +35,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import ProfileHeader from "./ProfileHeader";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 interface Results {
     text: string;
@@ -283,6 +284,13 @@ const HomeSearch = () => {
                                         <div className="mt-4 space-y-4 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
                                             {chatHistory.map((chat, index) => (
                                                 <div key={index} className="mb-4">
+                                                    <motion.div
+                                                        className="pt-2"
+                                                        initial={{ opacity: 0, y: 50 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ duration: 0.5 }}
+                                                        key={index}
+                                                    >
                                                     <div className="text-[34px] flex flex-row items-center gap-2">{chat.query}</div>
                                                     <div className="flex flex-col gap-2">
                                                         <div className="flex gap-1 items-center border bg-muted w-fit pl-1 pr-1 rounded-md">
@@ -355,12 +363,19 @@ const HomeSearch = () => {
                                                                                         <DrawerContent className="bg-zinc-900">
                                                                                             <DrawerHeader>
                                                                                                 <DrawerDescription>
-                                                                                                    <div className="border-b w-full">
+                                                                                                    <div className="border-b w-[95vw] overflow-x-auto">
                                                                                                         <div className="flex flex-row w-fit items-center gap-2 bg-muted/30">
                                                                                                             {Array.from(openedFiles).map((file) => (
-                                                                                                                <div key={file.name} className="flex items-center gap-2 cursor-pointer p-1 border-r" onClick={() => setSelectedFile(file)}>
-                                                                                                                    <h2 className="text-md">{file.name}</h2>
-                                                                                                                    <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} />
+                                                                                                                <div
+                                                                                                                    key={file.name}
+                                                                                                                    className={`flex items-center gap-2 cursor-pointer border-r `}
+                                                                                                                    onClick={() => setSelectedFile(file)}
+                                                                                                                >
+                                                                                                                    <div className={`flex flex-row items-center p-1 gap-1 ${selectedFile === file ? 'border-b-2 dark:border-white border-zinc-900' : ''}`}>
+                                                                                                                        <h2 className="text-md">{file.name}</h2>
+                                                                                                                        <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} />
+                                                                                                                    </div>
+
                                                                                                                 </div>
                                                                                                             ))}
                                                                                                         </div>
@@ -407,6 +422,7 @@ const HomeSearch = () => {
                                                         </div>
                                                     </div>
                                                     <hr className="border-t border-zinc-700 mt-4" />
+                                                    </motion.div>
                                                 </div>
 
                                             ))}
@@ -463,12 +479,19 @@ const HomeSearch = () => {
                         <>
                             <ResizableHandle withHandle className="hidden md:flex" />
                             <ResizablePanel defaultSize={60} minSize={30} className="hidden md:block">
-                                <div className="border-b w-full">
-                                    <div className="flex flex-row w-fit items-center gap-2 bg-muted/30">
+                                <div className="border-b w-full overflow-x-auto">
+                                    <div className="flex flex-row w-fit items-center bg-muted/30">
                                         {Array.from(openedFiles).map((file) => (
-                                            <div key={file.name} className="flex items-center gap-2 cursor-pointer p-1 border-r" onClick={() => setSelectedFile(file)}>
-                                                <h2 className="text-md">{file.name}</h2>
-                                                <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} />
+                                            <div
+                                                key={file.name}
+                                                className={`flex items-center gap-2 cursor-pointer border-r `}
+                                                onClick={() => setSelectedFile(file)}
+                                            >
+                                                <div className={`flex flex-row items-center p-1 gap-1 ${selectedFile === file ? 'border-b-2 dark:border-white border-zinc-900' : ''}`}>
+                                                   <h2 className="text-md">{file.name}</h2>
+                                                <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} /> 
+                                                </div>
+                                                
                                             </div>
                                         ))}
                                     </div>
