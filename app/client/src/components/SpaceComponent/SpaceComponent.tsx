@@ -8,15 +8,10 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
     Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { EllipsisVertical, Search, MessageSquareLock, ArrowUp, PlusCircle, X, MinusCircle } from 'lucide-react';
 import { Badge } from "@/components/ui/badge"
 import {
@@ -25,6 +20,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { SpaceInfo } from './SpaceInfo';
+import { format } from 'date-fns';
 
 const md: MarkdownIt = new MarkdownIt({
     html: true,
@@ -41,13 +38,16 @@ interface User {
 }
 
 interface Message {
+    _id: string;
     sender: { _id: string; email: string };
     message: string;
+    timestamp: string;
 }
 
 interface FileTree {
     [key: string]: {
-        file: { contents: string };
+        filename: string;
+        content: string;
     };
 }
 
@@ -63,18 +63,13 @@ const SpaceComponent: React.FC = () => {
     const location = useLocation();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<Set<string>>(new Set());
-    const [project, setProject] = useState<Project>(location.state.project);
+    const [project] = useState<Project>(location.state.project);
     const [message, setMessage] = useState('');
     const [users, setUsers] = useState<User[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
-    const [fileTree, setFileTree] = useState<FileTree>({});
-    const [currentFile, setCurrentFile] = useState<string | null>(null);
-    const [openFiles, setOpenFiles] = useState<string[]>([]);
+    // const [fileTree, setFileTree] = useState<FileTree>({});
     const user = localStorage.getItem('spaceUser');
-
-    const renderMarkdown = (content: string) => {
-        return { __html: md.render(content) };
-    };
+    const [previousChats, setPreviousChats] = useState<Message[]>([]);
 
     const handleUserClick = (id: string) => {
         setSelectedUserId((prevSelectedUserId) => {
@@ -104,56 +99,50 @@ const SpaceComponent: React.FC = () => {
     };
 
     const send = () => {
-        if (!message) return;
+        if (!message.trim()) return;
 
-        sendMessage('project-message', {
+        const timestamp = new Date().toISOString();
+
+        const newMessage = {
+            _id: Date.now().toString(), 
             message,
-            sender: user,
-        });
-        setMessages((prevMessages) => [...prevMessages, { sender: { _id: user || '', email: '' }, message }]);
+            sender: { _id: user || '', email: '' },
+            timestamp,
+        };
+
+        sendMessage('project-message', newMessage);
+
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
         setMessage('');
+
+        axios.post('/projects/save-chat', {
+            projectId: project._id,
+            message: newMessage,
+        }).catch(console.error);
     };
 
-    // const WriteAiMessage = (message: string) => {
-    //     const messageObject = JSON.parse(message);
-    //     return (
-    //         <div className="overflow-auto bg-slate-950 text-white rounded-sm p-2">
-    //             <Markdown
-    //                 children={messageObject.text}
-    //                 options={{
-    //                     overrides: {
-    //                         code: SyntaxHighlightedCode,
-    //                     },
-    //                 }}
-    //             />
-    //         </div>
-    //     );
-    // };
-
     useEffect(() => {
-        initializeSocket(project._id);
-
-        receiveMessage('project-message', (data : unknown) => {
-            const messageData = data as Message;
-            console.log(data);
-
-            if (messageData.sender._id === 'ai') {
-                const messageObject = JSON.parse(messageData.message);
-
-                if (messageObject.fileTree) {
-                    setFileTree(messageObject.fileTree || {});
-                }
-            }
-            setMessages((prevMessages) => [...prevMessages, messageData]);
-        });
+        if (!project._id) return;
 
         axios
-            .get(`/projects/get-project/${location.state.project._id}`)
+            .get(`/projects/get-chats/${project._id}`)
             .then((res) => {
-                setProject(res.data.project);
-                setFileTree(res.data.project.fileTree || {});
+                console.log('Previous chats:', res.data.chats);
+                setPreviousChats(res.data.chats); // Update previousChats here
             })
             .catch(console.error);
+    }, [project._id]);
+
+    useEffect(() => {
+        if (!location.state || !location.state.project) return;
+
+        // axios
+        //     .get(`/projects/get-project/${location.state.project._id}`)
+        //     .then((res) => {
+        //         setProject(res.data.project);
+        //         setFileTree(res.data.project.fileTree || {});
+        //     })
+        //     .catch(console.error);
 
         axios
             .get('/users/all')
@@ -161,70 +150,79 @@ const SpaceComponent: React.FC = () => {
                 setUsers(res.data.users);
             })
             .catch(console.error);
-    }, [project._id, location.state.project._id]);
+    }, [location.state]);
 
-    const saveFileTree = (ft: FileTree) => {
-        axios
-            .put('/projects/update-file-tree', {
-                projectId: project._id,
-                fileTree: ft,
-            })
-            .then((res) => {
-                console.log(res.data);
-            })
-            .catch(console.error);
-    };
+    useEffect(() => {
+        if (!project._id) return;
 
-    // const scrollToBottom = () => {
-    //   if (messageBox.current) {
-    //     messageBox.current.scrollTop = messageBox.current.scrollHeight;
-    //   }
+        const socket = initializeSocket(project._id);
+
+        const handleMessage = (data: unknown) => {
+            const messageData = data as Message;
+
+            // Prevent duplicates by checking if the message already exists
+            setMessages((prevMessages) => {
+                const exists = prevMessages.some(
+                    (msg) => msg.timestamp === messageData.timestamp && msg.sender._id === messageData.sender._id
+                );
+                return exists ? prevMessages : [...prevMessages, messageData];
+            });
+
+            // Update file tree if message is from "ai" and contains file tree data
+            // if (messageData.sender._id === 'ai') {
+            //     try {
+            //         const messageObject = JSON.parse(messageData.message);
+            //         if (messageObject.fileTree) {
+            //             setFileTree(messageObject.fileTree || {});
+            //         }
+            //     } catch (error) {
+            //         console.error('Error parsing AI message:', error);
+            //     }
+            // }
+        };
+
+        receiveMessage('project-message', handleMessage);
+
+        return () => {
+            socket.disconnect(); // Clean up socket connection
+        };
+    }, [project._id]);
+
+    // const saveFileTree = (ft: FileTree) => {
+    //     axios
+    //         .put('/projects/update-file-tree', {
+    //             projectId: project._id,
+    //             fileTree: ft,
+    //         })
+    //         .then((res) => {
+    //             console.log(res.data);
+    //         })
+    //         .catch(console.error);
     // };
 
     return (
         <div className='pt-2 pr-2 pb-2 w-full'>
             <main className="flex rounded-md bg-white dark:bg-zinc-900 border overflow-hidden">
-            {/* Left Section */}
-            <section className="left relative flex flex-col md:w-[30%] w-full border-r" style={{ height: 'calc(100vh - 20px)' }}>
-                {/* Header */}
-                <div className="rounded-none border-b flex flex-row justify-between p-2 items-center">
-                    <div className='flex flex-row gap-2'>
+                {/* Left Section */}
+                <section className="left relative flex flex-col md:w-[30%] w-full border-r" style={{ height: 'calc(100vh - 20px)' }}>
+                    {/* Header */}
+                    <div className="rounded-none border-b flex flex-row justify-between p-2 items-center">
+                        <div className='flex flex-row gap-2'>
                             <div className="md:w-14 md:h-14 w-14 h-14 flex items-center justify-center my-auto rounded-full dark:bg-zinc-800 bg-stone-100">
                                 <span className="text-sm text-foreground">
                                     {project.name.slice(0, 2).toUpperCase()}
                                 </span>
                             </div>
-                        <div className='flex flex-col'>
-                            <span className='text-[23px]'>{project.name}</span>
+                            <div className='flex flex-col'>
+                                <span className='text-[23px]'>{project.name}</span>
                                 <Sheet>
                                     <SheetTrigger><span className='text-[10px]'>tap here for space info</span></SheetTrigger>
-                                    <SheetContent>
-                                        <SheetHeader className='border-b p-4'>
-                                            <SheetTitle className='flex flex-col items-center justify-center'>
-                                                <div className="md:w-24 md:h-24 w-24 h-24 flex items-center justify-center my-auto rounded-full dark:bg-zinc-800 bg-stone-100">
-                                                    <span className="text-sm text-foreground">
-                                                        {project.name.slice(0, 2).toUpperCase()}
-                                                    </span>
-                                                </div>
-                                                <span>{project.name}</span>
-                                            </SheetTitle>
-                                        </SheetHeader>
-                                        <SheetDescription className='p-4 flex flex-col border-b'>
-                                            <span className='text-[26px] pb-4'>Description:</span>
-                                            {
-                                                project.description ? <span>{project.description}</span> : <span>No Description found</span>
-                                            }
-                                        </SheetDescription>
-                                        <SheetDescription className='p-4 flex flex-col'>
-                                            <span className='text-[26px] pb-4'>Collabrators:</span>
-                                            <SpaceInfo />
-                                        </SheetDescription>
-                                    </SheetContent>
+                                    <SpaceInfo />
                                 </Sheet>
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <Button variant="ghost" size='sm' className='rounded-full w-10 h-10'><Search /></Button>
+                        <div>
+                            <Button variant="ghost" size='sm' className='rounded-full w-10 h-10'><Search /></Button>
                             <DropdownMenu>
                                 <DropdownMenuTrigger>
                                     <Button variant="ghost" size='sm' className='rounded-full w-10 h-10'><EllipsisVertical /></Button>
@@ -238,197 +236,97 @@ const SpaceComponent: React.FC = () => {
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                        
-                    </div>
-                </div>
-
-                {/* Conversation Area */}
-                <ScrollArea className="h-full" >
-                    <div className="p-4 space-y-1">
-                        <div className='items-center flex flex-col pb-2'>
-                                <Badge variant="secondary" className='text-center text-[10px] w-fit'><MessageSquareLock className='h-3 w-3 mr-2'/>Messages are end-to-end encrypted.</Badge> 
                         </div>
-                        {messages && messages.length > 0 &&
-                            (messages.map((msg, index) => (
-                                <Card key={index} className={` rounded-[10px] ${msg.sender._id === user ? 'ml-auto' : ''} w-fit`}>
-                                    <CardContent className="p-2 pt-2">
-                                        {msg.sender._id === 'ai' ? (
-                                            <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={renderMarkdown(msg.message)} />
-                                        ) : (
-                                            <p className="text-sm">{msg.message}</p>
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            ))
-                        )}
                     </div>
-                </ScrollArea>
 
-                {/* Input Field */}
-                <div className="p-4 border-t">
-                    <div className="flex space-x-2">
-                        <Input
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            placeholder="Enter message"
-                            className='rounded-[30px]'
-                        />
-                        <Button onClick={send} variant="secondary" className='h-10 w-10 rounded-full'>
-                                <ArrowUp />
-                        </Button>
-                    </div>
-                </div>
-            </section>
-
-            {/* Right Section */}
-            <section className="right flex-grow flex flex-col hidden">
-                <Tabs defaultValue="files" className="flex-grow">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="files">Files</TabsTrigger>
-                        <TabsTrigger value="editor">Editor</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="files" className="flex-grow">
-                        <ScrollArea className="h-full">
-                            <div className="p-4 space-y-2">
-                                {Object.keys(fileTree).map((file, index) => (
-                                    <Button
-                                        key={index}
-                                        variant="outline"
-                                        className="w-full justify-start"
-                                        onClick={() => {
-                                            setCurrentFile(file);
-                                            setOpenFiles([...new Set([...openFiles, file])]);
-                                        }}
-                                    >
-                                        <i className="ri-file-code-line mr-2" />
-                                        {file}
-                                    </Button>
-                                ))}
+                    {/* Conversation Area */}
+                    <ScrollArea className="h-full">
+                        <div className="p-4 space-y-1">
+                            <div className="items-center flex flex-col pb-2">
+                                <Badge variant="secondary" className="text-center text-[10px] w-fit">
+                                    <MessageSquareLock className="h-3 w-3 mr-2" />Messages are end-to-end encrypted.
+                                </Badge>
                             </div>
-                        </ScrollArea>
-                    </TabsContent>
-                    <TabsContent value="editor" className="flex-grow flex flex-col">
-                        <div className="border-b">
-                            <ScrollArea className="whitespace-nowrap">
-                                <div className="flex p-2 space-x-2">
-                                    {openFiles.map((file, index) => (
-                                        <Button
-                                            key={index}
-                                            variant={currentFile === file ? "secondary" : "ghost"}
-                                            onClick={() => setCurrentFile(file)}
-                                        >
-                                            {file}
-                                        </Button>
-                                    ))}
-                                </div>
-                            </ScrollArea>
+                            {[...previousChats, ...messages].map((msg, index) => (
+                                msg && msg.sender ? (
+                                    <Card key={msg._id || index} className={`rounded-[10px] overflow-hidden ${msg.sender._id === user ? 'ml-auto' : ''} w-fit`}>
+                                        <CardContent className="pr-2 pl-2 pt-0 pb-0 bg-muted/80">
+                                            <div className="flex gap-1 pt-1 pb-1">
+                                                <p className="text-sm w-fit">{msg.message}</p>
+                                                <span className="text-[10px] text-gray-500 flex flex-col justify-end">
+                                                    {format(new Date(msg.timestamp), 'HH:mm a')}
+                                                </span>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ) : null
+                            ))}
                         </div>
-                        <ScrollArea className="flex-grow">
-                            {currentFile && fileTree[currentFile] && (
-                                <pre className="p-4">
-                                    <code
-                                        className="language-javascript"
-                                        contentEditable
-                                        suppressContentEditableWarning
-                                        onBlur={(e) => {
-                                            const updatedContent = e.target.innerText;
-                                            const ft = {
-                                                ...fileTree,
-                                                [currentFile!]: {
-                                                    file: {
-                                                        contents: updatedContent,
-                                                    },
-                                                },
-                                            };
-                                            setFileTree(ft);
-                                            saveFileTree(ft);
-                                        }}
-                                    >
-                                        {fileTree[currentFile!].file.contents}
-                                    </code>
-                                </pre>
-                            )}
-                        </ScrollArea>
-                    </TabsContent>
-                </Tabs>
-            </section>
+                    </ScrollArea>
 
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <Card className="w-[90%] max-w-96">
-                        <CardHeader className='flex flex-row items-center border-b justify-between'>
-                            <CardTitle>Add User to {project.name}</CardTitle>
-                            <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)}>
-                                <X/>
+
+                    {/* Input Field */}
+                    <div className="p-4 border-t">
+                        <div className="flex space-x-2">
+                            <Input
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                placeholder="Enter message"
+                                className='rounded-[30px]'
+                                onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
+                            />
+                            <Button onClick={send} variant="secondary" className='h-10 w-10 rounded-full'>
+                                <ArrowUp />
                             </Button>
-                        </CardHeader>
-                        <CardContent>
-                            <ScrollArea className="h-[300px] pt-4">
-                                <div className="space-y-2">
-                                    {users.map((user) => (
-                                        <Button
-                                            key={user._id}
-                                            variant={selectedUserId.has(user._id) ? "secondary" : "ghost"}
-                                            className="w-full justify-start"
-                                            onClick={() => handleUserClick(user._id)}
-                                        >
-                                            <Avatar className="mr-2">
-                                                <AvatarFallback>{user.email[0].toUpperCase()}</AvatarFallback>
-                                            </Avatar>
-                                            {user.email}
-                                        </Button>
-                                    ))}
-                                </div>
-                            </ScrollArea>
-                            <Button className="mt-4 w-full" onClick={addCollaborators}>
-                                Add Collaborators
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </div>
-            )}
-        </main> 
+                        </div>
+                    </div>
+                </section>
+
+                {/* Right Section */}
+                <section className="right flex-grow flex flex-col">
+                </section>
+
+                {/* Modal */}
+                {isModalOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                        <Card className="w-[90%] max-w-96">
+                            <CardHeader className='flex flex-row items-center border-b justify-between'>
+                                <CardTitle>Add User to {project.name}</CardTitle>
+                                <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)}>
+                                    <X />
+                                </Button>
+                            </CardHeader>
+                            <CardContent>
+                                <ScrollArea className="h-[300px] pt-4">
+                                    <div className="space-y-2">
+                                        {users.map((user) => (
+                                            <Button
+                                                key={user._id}
+                                                variant={selectedUserId.has(user._id) ? "secondary" : "ghost"}
+                                                className="w-full justify-start"
+                                                onClick={() => handleUserClick(user._id)}
+                                            >
+                                                <Avatar className="mr-2">
+                                                    <AvatarFallback>{user.email[0].toUpperCase()}</AvatarFallback>
+                                                </Avatar>
+                                                {user.email}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </ScrollArea>
+                                <Button className="mt-4 w-full" onClick={addCollaborators}>
+                                    Add Collaborators
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+            </main>
         </div>
-        
+
     );
 };
 
-function SpaceInfo() {
-    const location = useLocation();
-    const [project, setProject] = useState<Project>(location.state.project);
 
-    useEffect(() => {
-        axios
-            .get(`/projects/get-project/${location.state.project._id}`)
-            .then((res) => {
-                setProject(res.data.project);
-            })
-            .catch(console.error);
-    }, [project._id, location.state.project._id]);
-
-    return (
-        <div>
-            <ScrollArea className="h-full">
-                <div className="space-y-4">
-                    {project.users && project.users.length > 0 ? (
-                        project.users.map((user) => (
-                            <div key={user._id} className="flex items-center space-x-4">
-                                <Avatar>
-                                    <AvatarFallback>{user.email}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <p className="text-sm font-medium">{user.email}</p>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No users available</p>
-                    )}
-                </div>
-            </ScrollArea>
-        </div>
-    )
-}
 
 export default SpaceComponent;

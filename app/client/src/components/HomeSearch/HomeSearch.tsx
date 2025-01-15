@@ -72,8 +72,16 @@ const HomeSearch = () => {
     const [openedFiles, setOpenedFiles] = useState<Set<File>>(new Set());
 
     const handleFileSelect = (file: File) => {
+        setOpenedFiles((prevFiles) => {
+            const newFiles = new Set(prevFiles);
+            const existingFile = Array.from(newFiles).find(f => f.name === file.name);
+            if (existingFile) {
+                newFiles.delete(existingFile);
+            }
+            newFiles.add(file);
+            return newFiles;
+        });
         setSelectedFile(file);
-        setOpenedFiles((prevFiles) => new Set(prevFiles).add(file));
     };
 
     const handleFileClose = (file: File) => {

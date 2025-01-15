@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import projectModel from './models/project.model.js';
 import { generateResult } from './services/ai.service.js';
 import { configDotenv } from 'dotenv';
+import { format } from 'date-fns';
 
 configDotenv();
 
@@ -29,9 +30,7 @@ io.use(async (socket, next) => {
             return next(new Error('Invalid projectId'));
         }
 
-
         socket.project = await projectModel.findById(projectId);
-
 
         if (!token) {
             return next(new Error('Authentication error'))
@@ -43,7 +42,6 @@ io.use(async (socket, next) => {
             return next(new Error('Authentication error'))
         }
 
-
         socket.user = decoded;
 
         next();
@@ -54,7 +52,6 @@ io.use(async (socket, next) => {
 
 })
 
-
 io.on('connection', socket => {
     socket.roomId = socket.project._id.toString()
 
@@ -63,19 +60,23 @@ io.on('connection', socket => {
     socket.join(socket.roomId);
 
     socket.on('project-message', async data => {
-
         const message = data.message;
-
         const aiIsPresentInMessage = message.includes('@ai');
-        socket.broadcast.to(socket.roomId).emit('project-message', data)
+        socket.broadcast.to(socket.roomId).emit('project-message', data);
+
+        const chatEntry = {
+            email: socket.user.email,
+            message: message,
+            timestamp: format(new Date(data.timestamp), 'hh:mm a')
+        };
+
+        await projectModel.findByIdAndUpdate(socket.project._id, {
+            $push: { chats: chatEntry }
+        });
 
         if (aiIsPresentInMessage) {
-
-
             const prompt = message.replace('@ai', '');
-
             const result = await generateResult(prompt);
-
 
             io.to(socket.roomId).emit('project-message', {
                 message: result,
@@ -83,14 +84,11 @@ io.on('connection', socket => {
                     _id: 'ai',
                     email: 'AI'
                 }
-            })
+            });
 
-
-            return
+            return;
         }
-
-
-    })
+    });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');

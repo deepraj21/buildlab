@@ -5,7 +5,7 @@ let socketInstance: Socket | null = null;
 
 // Initialize the socket connection
 export const initializeSocket = (projectId: string): Socket => {
-    socketInstance = io(import.meta.env.VITE_API_URL as string, {
+    socketInstance = io(import.meta.env.VITE_BACKEND_URL as string, {
         auth: {
             token: localStorage.getItem('token'),
         },

@@ -18,10 +18,18 @@ const projectSchema = new mongoose.Schema({
             ref: 'user'
         }
     ],
-    fileTree: {
-        type: Object,
-        default: {}
-    },
+    fileTree: [
+        {
+            filename: {
+                type: String,
+                required: true
+            },
+            content: {
+                type: String,
+                required: true
+            }
+        }
+    ],
     chats: [
         {
             email: {
@@ -33,8 +41,8 @@ const projectSchema = new mongoose.Schema({
                 required: true
             },
             timestamp: {
-                type: Date,
-                default: Date.now
+                type: String,
+                require: true
             },
         }
     ]
