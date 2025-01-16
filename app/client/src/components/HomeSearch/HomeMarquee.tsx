@@ -51,37 +51,40 @@ const secondRow = reviews.slice(reviews.length / 2);
 const ReviewCard = ({
     icon: Icon,
     body,
+    onClick,
 }: {
     icon: React.ElementType;
     body: string;
+    onClick: () => void;
 }) => {
     return (
         <figure
             className={cn(
                 "relative w-fit cursor-pointer overflow-hidden rounded-xl border pt-1 pb-1 pl-2 pr-2 ",
                 "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
-                "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]",
+                "dark:border-gray-50/[.1] dark:bg-muted dark:hover:bg-[#20B8CD]/30",
             )}
+            onClick={onClick}
         >
             <div className="flex items-center space-x-2">
-                <Icon className="h-3 w-3" />
+                <Icon className="h-3 w-3 text-[#20B8CD]" />
                 <blockquote className="text-[10px]">{body}</blockquote>
             </div>
         </figure>
     );
 };
 
-export function HomeMarquee() {
+export function HomeMarquee({ setSearchQuery }: { setSearchQuery: (query: string) => void }) {
     return (
         <div className="md:max-w-2xl max-w-[330px] flex w-full flex-col items-center justify-center overflow-hidden mb-6 relative">
             <Marquee pauseOnHover className="[--duration:20s]">
                 {firstRow.map((review, index) => (
-                    <ReviewCard key={`first-${index}`} {...review} />
+                    <ReviewCard key={`first-${index}`} {...review} onClick={() => setSearchQuery(review.body)} />
                 ))}
             </Marquee>
             <Marquee reverse pauseOnHover className="[--duration:20s]">
                 {secondRow.map((review, index) => (
-                    <ReviewCard key={`second-${index}`} {...review} />
+                    <ReviewCard key={`second-${index}`} {...review} onClick={() => setSearchQuery(review.body)} />
                 ))}
             </Marquee>
             <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-zinc-900 to-transparent dark:from-zinc-900"></div>
