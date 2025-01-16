@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import DesktopSidebar from '@/components/Sidebar/DesktopSidebar';
-import { AlignLeft, AlignRight } from 'lucide-react';
+import { AlignLeft } from 'lucide-react';
 import ExploreComponent from '@/components/ExploreComponent/ExploreComponent';
 
 export default function Explore() {
@@ -21,23 +21,13 @@ export default function Explore() {
       >
         <DesktopSidebar />
       </div>
+      {showSidebar && (
+        <div className="fixed inset-0 bg-black/80 z-40" onClick={handleMenuClick}></div>
+      )}
       <ExploreComponent />
-      {
-        showSidebar ?
-          (
-            <div className="fixed left-24 top-4 md:hidden" onClick={handleMenuClick}>
-              <AlignRight />
-            </div>
-          )
-          :
-          (
-            <div className="fixed left-6 top-4 md:hidden" onClick={handleMenuClick}>
-              <AlignLeft />
-            </div>
-          )
-
-      }
-
+      <div className="fixed left-6 top-4 md:hidden" onClick={handleMenuClick}>
+        <AlignLeft />
+      </div>
     </div>
   );
 }

@@ -284,7 +284,7 @@ const HomeSearch = () => {
                                 }
                                 {
                                     chatHistory.length > 0 && (
-                                        <div className="mt-4 space-y-4 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
+                                        <div className="space-y-4 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
                                             {chatHistory.map((chat, index) => (
                                                 <div key={index} className="mb-4">
                                                     <BlurFade delay={0.25} inView>
