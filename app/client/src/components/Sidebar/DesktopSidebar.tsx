@@ -28,11 +28,11 @@ const DesktopSidebar = () => {
                 </div>
                 <div className='w-full flex flex-col items-center'>
                     <div className={`w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer ${location.pathname === '/' ? 'border-r-2 dark:border-white border-zinc-900 bg-zinc-900' : ''}`} onClick={() => navigate('/')}>
-                        <Search className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
+                        <Search className={`w-6 h-6 hover:scale-110 transition ease-in-out duration-300 ${location.pathname === '/' ? 'text-[#20B8CD]' : ''}`} />
                         <span className='text-[12px] p-1 hidden md:block'>search</span>
                     </div>
                     <div className={`w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer ${location.pathname === '/explore' ? 'border-r-2 dark:border-white border-zinc-900 bg-zinc-900' : ''}`} onClick={() => navigate('/explore')}>
-                        <Globe className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
+                        <Globe className={`w-6 h-6 hover:scale-110 transition ease-in-out duration-300 ${location.pathname === '/explore' ? 'text-[#20B8CD]' : ''}`} />
                         <span className='text-[12px] p-1 hidden md:block'>explore</span>
                     </div>
                     <Sheet>

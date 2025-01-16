@@ -264,7 +264,7 @@ const HomeSearch = () => {
                                     chatHistory.length == 0 && (
                                         <div className="transition-opacity duration-500">
                                             <div className="flex items-center justify-center mb-6">
-                                                <Atom className="w-20 h-20 animate-pulse" strokeWidth={1.3} />
+                                                <Atom className="w-20 h-20 animate-pulse text-[#20B8CD]" strokeWidth={1.3} />
                                             </div>
                                             <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
                                                 What can I help with?
@@ -436,7 +436,7 @@ const HomeSearch = () => {
                                             <Search className="w-4 h-4" />
                                         </div>
                                         <Input
-                                            placeholder="Search..."
+                                            placeholder="Search anything..."
                                             className="w-full rounded-full py-6 pl-10 pr-[55px]"
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -449,7 +449,7 @@ const HomeSearch = () => {
                                         />
                                         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
                                             <Button
-                                                className="w-8 h-8 rounded-full"
+                                                className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
                                                 variant="secondary"
                                                 size="sm"
                                                 onClick={handleSearch}
