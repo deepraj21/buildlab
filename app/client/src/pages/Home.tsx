@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import DesktopSidebar from '@/components/Sidebar/DesktopSidebar';
 import HomeSearch from '@/components/HomeSearch/HomeSearch';
-import { AlignLeft } from 'lucide-react';
+import { AlignLeft, CircleAlert } from 'lucide-react';
 
 export default function Home() {
     const theme = localStorage.getItem('vite-ui-theme');
@@ -26,8 +26,14 @@ export default function Home() {
                 <div className="fixed inset-0 bg-black/80 z-40" onClick={handleMenuClick}></div>
             )}
             <HomeSearch />
-            <div className="fixed left-6 top-4 md:hidden" onClick={handleMenuClick}>
+            <div className="fixed left-5 top-4 md:hidden" onClick={handleMenuClick}>
                 <AlignLeft />
+            </div>
+            <div className="fixed left-1/2 transform -translate-x-1/2 top-4 md:hidden" onClick={handleMenuClick}>
+                <span className='text-[20px]'>buildlab</span>
+            </div>
+            <div className="fixed right-5 top-4 md:hidden" onClick={handleMenuClick}>
+                <CircleAlert/>
             </div>
         </div>
     );

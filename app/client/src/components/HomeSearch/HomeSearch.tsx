@@ -36,6 +36,7 @@ import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import BlurFade from "@/components/ui/blur-fade";
+import { HomeMarquee } from "./HomeMarquee";
 
 interface Results {
     text: string;
@@ -258,18 +259,17 @@ const HomeSearch = () => {
                         {/* Main Content */}
                         <div className="p-3 max-w-3xl w-full flex justify-center items-center min-w-3xl">
                             <div className="space-y-4">
-
                                 {/* Header */}
                                 {
                                     chatHistory.length == 0 && (
                                         <div className="transition-opacity duration-500">
-                                            <div className="flex items-center justify-center mb-12">
+                                            <div className="flex items-center justify-center mb-6">
                                                 <Atom className="w-20 h-20 animate-pulse" strokeWidth={1.3} />
                                             </div>
-
-                                            <h1 className="md:text-4xl text-2xl font-normal text-center mb-12">
-                                                What we are building today?
+                                            <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
+                                                What can I help with?
                                             </h1>
+                                            <HomeMarquee/>
                                         </div>
                                     )
                                 }
