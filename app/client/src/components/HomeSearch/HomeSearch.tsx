@@ -33,7 +33,6 @@ import {
 } from "@/components/ui/resizable"
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import ProfileHeader from "./ProfileHeader";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import BlurFade from "@/components/ui/blur-fade";
@@ -250,7 +249,7 @@ const HomeSearch = () => {
     }, []);
 
     return (
-        <div className="pt-2 pr-2 pb-2 w-full">
+        <div className="pt-2 pr-2 pl-2 pb-2 w-full">
             <div className="border h-full flex flex-row justify-center items-center rounded-md bg-white dark:bg-zinc-900">
                 <ResizablePanelGroup
                     direction="horizontal"
@@ -259,11 +258,6 @@ const HomeSearch = () => {
                         {/* Main Content */}
                         <div className="p-3 max-w-3xl w-full flex justify-center items-center min-w-3xl">
                             <div className="space-y-4">
-
-                                {/* Header */}
-                                <header className="fixed flex top-6 right-6 text-sm text-gray-400">
-                                    <ProfileHeader />
-                                </header>
 
                                 {/* Header */}
                                 {

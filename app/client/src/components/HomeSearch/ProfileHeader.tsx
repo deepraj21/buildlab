@@ -32,9 +32,13 @@ const ProfileHeader = () => {
           {!user ? (
               <AlertDialog>
                   <AlertDialogTrigger asChild>
-                      <Button variant="outline" className="dark:border-zinc-700 rounded-full h-11 bg-muted">
+                      <Button
+                          variant="outline"
+                          className="dark:border-zinc-700 rounded-full h-11 bg-muted -rotate-90 mb-8 dark:bg-zinc-900"
+                      >
                           SignIn <User2 className="w-6 h-6" />
                       </Button>
+
                   </AlertDialogTrigger>
                   <AlertDialogContent className="md:max-w-[400px]">
                       <Authentication />
