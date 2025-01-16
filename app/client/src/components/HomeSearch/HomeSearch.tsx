@@ -36,6 +36,7 @@ import { tomorrowNight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import ProfileHeader from "./ProfileHeader";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import BlurFade from "@/components/ui/blur-fade";
 
 interface Results {
     text: string;
@@ -292,145 +293,141 @@ const HomeSearch = () => {
                                         <div className="mt-4 space-y-4 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
                                             {chatHistory.map((chat, index) => (
                                                 <div key={index} className="mb-4">
-                                                    <motion.div
-                                                        className="pt-2"
-                                                        initial={{ opacity: 0, y: 50 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        transition={{ duration: 0.5 }}
-                                                        key={index}
-                                                    >
-                                                    <div className="text-[34px] flex flex-row items-center gap-2">{chat.query}</div>
-                                                    <div className="flex flex-col gap-2">
-                                                        <div className="flex gap-1 items-center border bg-muted w-fit pl-1 pr-1 rounded-md">
-                                                            <Timer className="h-3 w-3" />
-                                                            <h2 className="text-[12px]">Response Time: {chat.responseTime}ms</h2>
-                                                        </div>
-                                                        <div className="flex gap-1 border items-center bg-muted w-fit pl-1 pr-1 rounded-md">
-                                                            <CalendarDays className="h-3 w-3" />
-                                                            <h2 className="text-[12px]">{chat.timestamp.toString().split('(')[0].trim()}</h2>
-                                                        </div>
-                                                    </div>
-                                                    <div className="pt-6">
-                                                        <div className="flex gap-2 items-center">
-                                                            <Atom className="h-5 w-5" />
-                                                            <h2 className="text-xl">Response:</h2>
-                                                        </div>
-                                                        <div className="pt-2">
-                                                            <span>{chat.response.text}</span>
-                                                        </div>
-
-
-                                                        {chat.response.resources && (
-                                                            <div className="pt-4 w-[300px]">
-                                                                <div className="flex gap-2 items-center">
-                                                                    <Component className="h-5 w-5" />
-                                                                    <h2 className="text-xl">Resources:</h2>
-                                                                </div>
-                                                                <div>
-                                                                    {chat.response.resources.map((resource) => (
-                                                                        <div className="pt-2">
-                                                                            <LinkPreviewFetcher url={resource} />
-                                                                        </div>
-
-                                                                    ))}
-                                                                </div>
+                                                    <BlurFade delay={0.25} inView>
+                                                        <div className="text-[34px] flex flex-row items-center gap-2">{chat.query}</div>
+                                                        <div className="flex flex-col gap-2">
+                                                            <div className="flex gap-1 items-center border bg-muted w-fit pl-1 pr-1 rounded-md">
+                                                                <Timer className="h-3 w-3" />
+                                                                <h2 className="text-[12px]">Response Time: {chat.responseTime}ms</h2>
                                                             </div>
-                                                        )}
-                                                        {chat.response.files && (
-                                                            <div className="pt-4 w-[300px]">
-                                                                <div className="flex gap-2 items-center">
-                                                                    <Code2 className="h-5 w-5" />
-                                                                    <h2 className="text-xl">Code Files:</h2>
-                                                                </div>
-                                                                <div>
-                                                                    {chat.response.files.map((file) => (
-                                                                        <div className="pt-2">
-                                                                            <div className="border rounded-lg p-1 w-fit bg-muted/50 cursor-pointer hover:bg-muted/100">
-                                                                                <div className="flex felx-row justify-between items-center gap-2">
-                                                                                    <div className="flex flex-row items-center gap-1">
-                                                                                        <Code />
-                                                                                        <span className="overflow-x-auto w-[90%]">
-                                                                                            {file.name}
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline hidden md:block" onClick={() => {
-                                                                                        handleFileSelect(file);
-                                                                                        setSplitView(true);
-                                                                                    }}>
-                                                                                        <ArrowUpRightSquare className="h-4 w-4" />
-                                                                                    </div>
-                                                                                    <Drawer>
-                                                                                        <DrawerTrigger className="md:hidden block">
-                                                                                            <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline" onClick={() => {
-                                                                                                handleFileSelect(file);
-                                                                                                setSplitView(true);
-                                                                                            }}>
-                                                                                                <ArrowUpRightSquare className="h-4 w-4" />
-                                                                                            </div>
-                                                                                        </DrawerTrigger>
-                                                                                        <DrawerContent className="bg-zinc-900">
-                                                                                            <DrawerHeader>
-                                                                                                <DrawerDescription>
-                                                                                                    <div className="border-b w-[95vw] overflow-x-auto">
-                                                                                                        <div className="flex flex-row w-fit items-center gap-2 bg-muted/30">
-                                                                                                            {Array.from(openedFiles).map((file) => (
-                                                                                                                <div
-                                                                                                                    key={file.name}
-                                                                                                                    className={`flex items-center gap-2 cursor-pointer border-r `}
-                                                                                                                    onClick={() => setSelectedFile(file)}
-                                                                                                                >
-                                                                                                                    <div className={`flex flex-row items-center p-1 gap-1 ${selectedFile === file ? 'border-b-2 dark:border-white border-zinc-900' : ''}`}>
-                                                                                                                        <h2 className="text-md">{file.name}</h2>
-                                                                                                                        <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} />
-                                                                                                                    </div>
+                                                            <div className="flex gap-1 border items-center bg-muted w-fit pl-1 pr-1 rounded-md">
+                                                                <CalendarDays className="h-3 w-3" />
+                                                                <h2 className="text-[12px]">{chat.timestamp.toString().split('(')[0].trim()}</h2>
+                                                            </div>
+                                                        </div>
+                                                    </BlurFade>
+                                                    <BlurFade delay={0.25 * 2} inView>
+                                                        <div className="pt-6">
+                                                            <div className="flex gap-2 items-center">
+                                                                <Atom className="h-5 w-5" />
+                                                                <h2 className="text-xl">Response:</h2>
+                                                            </div>
+                                                            <div className="pt-2">
+                                                                <span>{chat.response.text}</span>
+                                                            </div>
 
-                                                                                                                </div>
-                                                                                                            ))}
-                                                                                                        </div>
-                                                                                                    </div>
 
-                                                                                                    <div className="h-[60vh] w-[95vw] overflow-x-auto overflow-y-auto ">
-                                                                                                        <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight} customStyle={{ backgroundColor: 'transparent' }}>
-                                                                                                            {selectedFile?.content || ""}
-                                                                                                        </SyntaxHighlighter>
-                                                                                                        <div className="pt-4 pl-2 flex flex-row gap-2">
-                                                                                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyCodeToClipboard(selectedFile?.content || "")}>
-                                                                                                                <Copy className="h-3 w-3" />
-                                                                                                                <h2 className="text-[12px]">Copy</h2>
-                                                                                                            </div>
-                                                                                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => { if (selectedFile) downloadCode(selectedFile); }}>
-                                                                                                                <Download className="h-3 w-3" />
-                                                                                                                <h2 className="text-[12px]">Download</h2>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </DrawerDescription>
-                                                                                            </DrawerHeader>
-
-                                                                                        </DrawerContent>
-                                                                                    </Drawer>
-                                                                                </div>
+                                                            {chat.response.resources && (
+                                                                <div className="pt-4 w-[300px]">
+                                                                    <div className="flex gap-2 items-center">
+                                                                        <Component className="h-5 w-5" />
+                                                                        <h2 className="text-xl">Resources:</h2>
+                                                                    </div>
+                                                                    <div>
+                                                                        {chat.response.resources.map((resource) => (
+                                                                            <div className="pt-2">
+                                                                                <LinkPreviewFetcher url={resource} />
                                                                             </div>
 
-                                                                        </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {chat.response.files && (
+                                                                <div className="pt-4 w-[300px]">
+                                                                    <div className="flex gap-2 items-center">
+                                                                        <Code2 className="h-5 w-5" />
+                                                                        <h2 className="text-xl">Code Files:</h2>
+                                                                    </div>
+                                                                    <div>
+                                                                        {chat.response.files.map((file) => (
+                                                                            <div className="pt-2">
+                                                                                <div className="border rounded-lg p-1 w-fit bg-muted/50 cursor-pointer hover:bg-muted/100">
+                                                                                    <div className="flex felx-row justify-between items-center gap-2">
+                                                                                        <div className="flex flex-row items-center gap-1">
+                                                                                            <Code />
+                                                                                            <span className="overflow-x-auto w-[90%]">
+                                                                                                {file.name}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline hidden md:block" onClick={() => {
+                                                                                            handleFileSelect(file);
+                                                                                            setSplitView(true);
+                                                                                        }}>
+                                                                                            <ArrowUpRightSquare className="h-4 w-4" />
+                                                                                        </div>
+                                                                                        <Drawer>
+                                                                                            <DrawerTrigger className="md:hidden block">
+                                                                                                <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline" onClick={() => {
+                                                                                                    handleFileSelect(file);
+                                                                                                    setSplitView(true);
+                                                                                                }}>
+                                                                                                    <ArrowUpRightSquare className="h-4 w-4" />
+                                                                                                </div>
+                                                                                            </DrawerTrigger>
+                                                                                            <DrawerContent className="bg-zinc-900">
+                                                                                                <DrawerHeader>
+                                                                                                    <DrawerDescription>
+                                                                                                        <div className="border-b w-[95vw] overflow-x-auto">
+                                                                                                            <div className="flex flex-row w-fit items-center gap-2 bg-muted/30">
+                                                                                                                {Array.from(openedFiles).map((file) => (
+                                                                                                                    <div
+                                                                                                                        key={file.name}
+                                                                                                                        className={`flex items-center gap-2 cursor-pointer border-r `}
+                                                                                                                        onClick={() => setSelectedFile(file)}
+                                                                                                                    >
+                                                                                                                        <div className={`flex flex-row items-center p-1 gap-1 ${selectedFile === file ? 'border-b-2 dark:border-white border-zinc-900' : ''}`}>
+                                                                                                                            <h2 className="text-md">{file.name}</h2>
+                                                                                                                            <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} />
+                                                                                                                        </div>
 
-                                                                    ))}
+                                                                                                                    </div>
+                                                                                                                ))}
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                        <div className="h-[60vh] w-[95vw] overflow-x-auto overflow-y-auto ">
+                                                                                                            <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight} customStyle={{ backgroundColor: 'transparent' }}>
+                                                                                                                {selectedFile?.content || ""}
+                                                                                                            </SyntaxHighlighter>
+                                                                                                            <div className="pt-4 pl-2 flex flex-row gap-2">
+                                                                                                                <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyCodeToClipboard(selectedFile?.content || "")}>
+                                                                                                                    <Copy className="h-3 w-3" />
+                                                                                                                    <h2 className="text-[12px]">Copy</h2>
+                                                                                                                </div>
+                                                                                                                <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => { if (selectedFile) downloadCode(selectedFile); }}>
+                                                                                                                    <Download className="h-3 w-3" />
+                                                                                                                    <h2 className="text-[12px]">Download</h2>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </DrawerDescription>
+                                                                                                </DrawerHeader>
+
+                                                                                            </DrawerContent>
+                                                                                        </Drawer>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            <div className="pt-4 flex flex-row gap-2">
+                                                                <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyChatToClipboard(chat)}>
+                                                                    <Copy className="h-3 w-3" />
+                                                                    <h2 className="text-[12px]">Copy</h2>
+                                                                </div>
+                                                                <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => downloadChatAsJson(chat)}>
+                                                                    <Download className="h-3 w-3" />
+                                                                    <h2 className="text-[12px]">Download</h2>
                                                                 </div>
                                                             </div>
-                                                        )}
-                                                        <div className="pt-4 flex flex-row gap-2">
-                                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyChatToClipboard(chat)}>
-                                                                <Copy className="h-3 w-3" />
-                                                                <h2 className="text-[12px]">Copy</h2>
-                                                            </div>
-                                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => downloadChatAsJson(chat)}>
-                                                                <Download className="h-3 w-3" />
-                                                                <h2 className="text-[12px]">Download</h2>
-                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <hr className="border-t border-zinc-700 mt-4" />
-                                                    </motion.div>
+                                                        <hr className="border-t border-zinc-700 mt-4" />
+                                                    </BlurFade>
                                                 </div>
 
                                             ))}
