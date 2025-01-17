@@ -1,15 +1,13 @@
-import {
-    AlertDialogCancel,
-    AlertDialogFooter,
-} from "@/components/ui/alert-dialog"
 import axios from '@/config/axios'
 import { useState } from 'react'
 import { Input } from "../../ui/input"
 import { Button } from "../../ui/button"
 import { toast } from "sonner"
 import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const Signup = () => {
+    const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -28,6 +26,7 @@ const Signup = () => {
             toast.success("Account created successfully")
             localStorage.setItem('token', res.data.token)
             localStorage.setItem('spaceUser', res.data.user.email)
+            navigate('/')
         } catch (err: any) {
             toast.error(err.response?.data?.message || "An error occurred during registration")
             console.log(err.response?.data)
@@ -43,7 +42,6 @@ const Signup = () => {
     return (
         <form onSubmit={submitHandler}>
             <div className="pl-4 pr-4">
-                <h1 className="text-2xl mt-4 mb-4">Create Account</h1>
                 <div className="mb-4">
                     <label className="block text-gray-400 mb-2" htmlFor="email">Email</label>
                     <Input
@@ -71,20 +69,19 @@ const Signup = () => {
                             disabled={isLoading}
                         >
                             {showPassword ? (
-                                <EyeOff className="h-5 w-5" aria-hidden="true" />
+                                <EyeOff className="h-5 w-5 text-[#20B8CD]/50" aria-hidden="true" />
                             ) : (
-                                <Eye className="h-5 w-5" aria-hidden="true" />
+                                    <Eye className="h-5 w-5 text-[#20B8CD]" aria-hidden="true" />
                             )}
                         </button>
                     </div>
                 </div>
             </div>
-            <AlertDialogFooter className="border-t p-4">
-                <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
-                <div className="flex flex-grow"></div>
-                <Button
+           <div className="pr-4 pl-4">
+            <Button
                     type="submit"
                     disabled={isLoading}
+                    className="w-full"
                 >
                     {isLoading ? (
                         <>
@@ -95,7 +92,7 @@ const Signup = () => {
                         'Register'
                     )}
                 </Button>
-            </AlertDialogFooter>
+           </div>
         </form>
     )
 }
