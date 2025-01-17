@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">buildlab</string>
+    <string name="title_activity_main">buildlab</string>
+    <string name="package_name">app.vercel.buildlab</string>
+    <string name="custom_url_scheme">app.vercel.buildlab</string>
+</resources>
