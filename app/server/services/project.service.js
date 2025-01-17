@@ -7,6 +7,9 @@ export const createProject = async ({
     if (!name) {
         throw new Error('Name is required')
     }
+    if (!description) {
+        throw new Error('Description is required')
+    }
     if (!userId) {
         throw new Error('UserId is required')
     }
@@ -15,6 +18,7 @@ export const createProject = async ({
     try {
         project = await projectModel.create({
             name,
+            description,
             users: [ userId ]
         });
     } catch (error) {

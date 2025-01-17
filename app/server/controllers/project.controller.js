@@ -13,11 +13,11 @@ export const createProject = async (req, res) => {
 
     try {
 
-        const { name } = req.body;
+        const { name, description } = req.body;
         const loggedInUser = await userModel.findOne({ email: req.user.email });
         const userId = loggedInUser._id;
 
-        const newProject = await projectService.createProject({ name, userId });
+        const newProject = await projectService.createProject({ name, description, userId });
 
         res.status(201).json(newProject);
 

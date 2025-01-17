@@ -1,5 +1,4 @@
 import { useState } from 'react'
-// import { X } from 'lucide-react'
 import { categories, articles } from './data'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -13,10 +12,10 @@ const ExploreComponent = () => {
         ? articles
         : articles.filter(article => article.category === selectedCategory)
     return (
-        <div className="pt-2 pr-2 pb-2 pl-2 w-full">
+        <div className="md:p-2 w-full">
             <div className="border h-full flex flex-col justify-center items-center rounded-md bg-white dark:bg-zinc-900">
                 <div className='max-w-4xl w-full'>
-                    <nav className="sticky top-0 z-10 backdrop-blur-sm">
+                    <nav className="sticky pt-4 z-10 ">
                         <div className="container mx-auto px-4">
                             <div className="flex items-center gap-6 overflow-x-auto py-4 no-scrollbar">
                                 {categories.map(category => (
@@ -24,9 +23,8 @@ const ExploreComponent = () => {
                                         key={category.id}
                                         variant='ghost'
                                         onClick={() => setSelectedCategory(category.id)}
-                                        className={`whitespace-nowrap pl-2 pr-2 h-8 rounded-full text-sm transition-colors
-                  ${selectedCategory === category.id
-                                            ? 'bg-[#20B8CD]/30 text-white'
+                                        className={`whitespace-nowrap pl-2 pr-2 h-8 rounded-full text-sm transition-colors ${selectedCategory === category.id
+                                                ? 'bg-[#20B8CD]/30 text-white'
                                                 : 'text-gray-400 hover:text-white'
                                             }`}
                                     >
@@ -43,19 +41,18 @@ const ExploreComponent = () => {
                             {filteredArticles.map(article => (
                                 <article
                                     key={article.id}
-                                    className="group relative flex flex-col gap-4 rounded-xl bg-muted p-4 transition-transform hover:-translate-y-1"
+                                    className="group relative flex flex-col gap-2 bg-zinc-900 rounded-lg border bg-muted/60 transition-transform hover:-translate-y-1"
                                 >
-                                    <div className="relative aspect-video overflow-hidden rounded-lg">
+                                    <div className="relative aspect-video overflow-hidden border-b">
                                         <img
-                                            src={article.image || "/placeholder.svg"}
+                                            src={article.image}
                                             alt={article.title}
-
                                             className="object-cover"
                                         />
                                     </div>
-                                    <div className="flex flex-col gap-2">
-                                        <h2 className="text-xl font-semibold">{article.title}</h2>
-                                        <p className="text-gray-400">{article.excerpt}</p>
+                                    <div className="flex flex-col gap-2 pl-2 pr-2 pb-2">
+                                        <h2 className="text-xl font-semibold w-full truncate">{article.title}</h2>
+                                        <p className="text-gray-400 w-full truncate">{article.excerpt}</p>
                                         <div className="flex items-center gap-2 text-sm text-gray-500">
                                             <span>{article.author}</span>
                                         </div>

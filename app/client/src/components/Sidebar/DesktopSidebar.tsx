@@ -11,6 +11,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import ProfileHeader from '../HomeSearch/ProfileHeader'
+import CreateSpace from '../CreateSpace/CreateSpace'
 
 const DesktopSidebar = () => {
     const navigate = useNavigate()
@@ -35,23 +36,35 @@ const DesktopSidebar = () => {
                         <Globe className={`w-6 h-6 hover:scale-110 transition ease-in-out duration-300 ${location.pathname === '/explore' ? 'text-[#20B8CD]' : ''}`} />
                         <span className='text-[12px] p-1 hidden md:block'>explore</span>
                     </div>
-                    <Sheet>
-                        <SheetTrigger>
-                            <div className='w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer'>
-                                <Inbox className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
-                                <span className='text-[12px] p-1 hidden md:block'>spaces</span>
-                            </div>
-                        </SheetTrigger>
-                        <SheetContent>
-                            <SheetHeader>
-                                <SheetTitle>Are you absolutely sure?</SheetTitle>
-                                <SheetDescription>
-                                    This action cannot be undone. This will permanently delete your account
-                                    and remove your data from our servers.
-                                </SheetDescription>
-                            </SheetHeader>
-                        </SheetContent>
-                    </Sheet>
+                    {
+                        isLoggedIn ? 
+                        (
+                                <Sheet>
+                                    <SheetTrigger>
+                                        <div className='w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer'>
+                                            <Inbox className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
+                                            <span className='text-[12px] p-1 hidden md:block'>spaces</span>
+                                        </div>
+                                    </SheetTrigger>
+                                    <SheetContent>
+                                        <SheetHeader className='border-b p-4'>
+                                            <SheetTitle>Create your Space</SheetTitle>
+                                            <SheetDescription className='text-[11px]'>
+                                                Space is a place to collabrate and develop ideas with your team.
+                                            </SheetDescription>
+                                        </SheetHeader>
+                                        <SheetDescription className='p-4 border-b'>
+                                            <CreateSpace />
+                                        </SheetDescription>
+                                    </SheetContent>
+                                </Sheet>
+                        ) : (
+                                <div className='w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer' onClick={()=>{navigate('/auth')}}>
+                                    <Inbox className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
+                                    <span className='text-[12px] p-1 hidden md:block'>spaces</span>
+                                </div>
+                        )
+                    }
                 </div>
             </div>
             <div className='pb-1'>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import DesktopSidebar from '@/components/Sidebar/DesktopSidebar';
-import { AlignLeft } from 'lucide-react';
+import { AlignLeft,CircleAlert } from 'lucide-react';
 import ExploreComponent from '@/components/ExploreComponent/ExploreComponent';
 
 export default function Explore() {
@@ -25,8 +25,16 @@ export default function Explore() {
         <div className="fixed inset-0 bg-black/80 z-40" onClick={handleMenuClick}></div>
       )}
       <ExploreComponent />
-      <div className="fixed left-6 top-4 md:hidden" onClick={handleMenuClick}>
-        <AlignLeft />
+      <div className='fixed top-0 flex justify-between w-full p-2 backdrop-blur-sm md:hidden items-center'>
+        <div className="md:hidden" onClick={handleMenuClick}>
+          <AlignLeft />
+        </div>
+        <div className="md:hidden">
+          <span className='text-[20px]'>buildlab</span>
+        </div>
+        <div className="md:hidden">
+          <CircleAlert />
+        </div>
       </div>
     </div>
   );

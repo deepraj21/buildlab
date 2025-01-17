@@ -250,7 +250,7 @@ const HomeSearch = () => {
     }, []);
 
     return (
-        <div className="pt-2 pr-2 pl-2 pb-2 w-full">
+        <div className="md:p-2 w-full">
             <div className="border h-full flex flex-row justify-center items-center rounded-md bg-white dark:bg-zinc-900">
                 <ResizablePanelGroup
                     direction="horizontal"

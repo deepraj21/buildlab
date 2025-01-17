@@ -27,7 +27,7 @@ export default function Home() {
             )}
             <HomeSearch />
 
-            <div className='fixed top-0 flex justify-between w-full p-4 backdrop-blur-sm md:hidden'>
+            <div className='fixed top-0 flex justify-between w-full p-2 backdrop-blur-sm md:hidden items-center'>
                 <div className="md:hidden" onClick={handleMenuClick}>
                     <AlignLeft />
                 </div>
@@ -38,7 +38,6 @@ export default function Home() {
                     <CircleAlert />
                 </div>
             </div>
-           
         </div>
     );
 }
