@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { categories, articles } from './data'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+// import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 const ExploreComponent = () => {
     const [selectedCategory, setSelectedCategory] = useState('for-you')
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [selectedInterests, setSelectedInterests] = useState<string[]>(['tech-science'])
+    // const [isModalOpen, setIsModalOpen] = useState(false)
+    // const [selectedInterests, setSelectedInterests] = useState<string[]>(['tech-science'])
 
     const filteredArticles = selectedCategory === 'for-you'
         ? articles
@@ -19,9 +18,8 @@ const ExploreComponent = () => {
                         <div className="container mx-auto px-4">
                             <div className="flex items-center gap-6 overflow-x-auto py-4 no-scrollbar">
                                 {categories.map(category => (
-                                    <Button
+                                    <button
                                         key={category.id}
-                                        variant='ghost'
                                         onClick={() => setSelectedCategory(category.id)}
                                         className={`whitespace-nowrap pl-2 pr-2 h-8 rounded-full text-sm transition-colors ${selectedCategory === category.id
                                                 ? 'bg-[#20B8CD]/30 text-white'
@@ -29,7 +27,7 @@ const ExploreComponent = () => {
                                             }`}
                                     >
                                         {category.name}
-                                    </Button>
+                                    </button>
                                 ))}
                             </div>
                         </div>
@@ -63,7 +61,7 @@ const ExploreComponent = () => {
                     </main>
 
                     {/* Interests Modal */}
-                    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                    {/* <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                         <DialogContent className="sm:max-w-md">
                             <DialogHeader>
                                 <DialogTitle>Make it yours</DialogTitle>
@@ -98,7 +96,7 @@ const ExploreComponent = () => {
                                 </Button>
                             </div>
                         </DialogContent>
-                    </Dialog>
+                    </Dialog> */}
                 </div>
             </div>
         </div>

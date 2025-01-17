@@ -23,7 +23,7 @@ const Signup = () => {
                 password
             })
             console.log(res.data)
-            toast.success("Account created successfully")
+            toast.success("🎉 Congratulations, Welcome to buildlab")
             localStorage.setItem('token', res.data.token)
             localStorage.setItem('spaceUser', res.data.user.email)
             navigate('/')

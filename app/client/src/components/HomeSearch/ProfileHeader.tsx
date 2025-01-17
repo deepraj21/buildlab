@@ -1,12 +1,6 @@
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { Settings,ArrowLeftCircle,User2 } from "lucide-react";
+import { Settings, User2, ArrowLeftCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const ProfileHeader = () => {
@@ -23,36 +17,35 @@ const ProfileHeader = () => {
         localStorage.removeItem("token");
         setUser(null);
     };
-  return (
-    <div>
-          {!user ? (
-              <Button
-                  variant="outline"
-                  className="dark:border-zinc-700 rounded-full h-11 bg-muted -rotate-90 mb-8 dark:bg-zinc-900"
-                  onClick={() => { navigate('/auth')}}
-              >
-                  SignIn <User2 className="w-6 h-6" />
-              </Button>
+    return (
+        <div>
+            {!user ? (
+                <Button
+                    variant="outline"
+                    className="dark:border-zinc-700 rounded-full h-11 bg-muted -rotate-90 mb-8 dark:bg-zinc-900"
+                    onClick={() => { navigate('/auth') }}
+                >
+                    SignIn <User2 className="w-6 h-6" />
+                </Button>
 
-          ) : (
-              <DropdownMenu>
-                  <DropdownMenuTrigger>
-                      <Button variant="outline" className="dark:border-zinc-700 rounded-full h-11 bg-muted">
-                          {user[0].toUpperCase()}
-                      </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                      <DropdownMenuItem className="cursor-pointer">
-                          <Settings />
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer" onClick={logout}>
-                          <ArrowLeftCircle />
-                      </DropdownMenuItem>
-                  </DropdownMenuContent>
-              </DropdownMenu>
-          )}
-    </div>
-  )
+            ) : (
+                <>
+                    <div className="w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer">
+                        <Settings className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
+                        <span className='text-[12px] p-1 hidden md:block'>settings</span>
+                    </div>
+                    <div className="w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer">
+                        <User2 className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
+                        <span className='text-[12px] p-1 hidden md:block w-[60px] overflow-x-scroll'>{user}</span>
+                    </div>
+                    <div className="w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer" onClick={logout}>
+                        <ArrowLeftCircle className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
+                        <span className='text-[12px] p-1 hidden md:block'>Logout</span>
+                    </div>
+                </>
+            )}
+        </div>
+    )
 }
 
 export default ProfileHeader
