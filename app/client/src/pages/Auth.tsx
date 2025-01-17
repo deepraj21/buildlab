@@ -2,11 +2,13 @@ import { Authentication } from '@/components/Auth/Authentication'
 import { AuroraText } from "@/components/ui/aurora-text";
 import { LineShadowText } from "@/components/ui/line-shadow-text";
 import { Atom } from 'lucide-react';
+import { Meteors } from "@/components/ui/meteors";
 
 const Auth = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-900">
-      <div className="w-full max-w-7xl p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen relative flex items-center justify-center bg-white dark:bg-zinc-900 w-full overflow-hidden">
+      <Meteors number={30} />
+      <div className="w-full max-w-5xl p-4 md:p-6 lg:p-8">
         <div className="grid md:grid-cols-[1fr,400px] gap-8">
           {/* Left section - hidden on mobile */}
           <div className="hidden md:block space-y-8 my-auto">
@@ -31,6 +33,7 @@ const Auth = () => {
 
           {/* Right section - Authentication component */}
           <div className="w-full md:w-auto">
+            <AuroraText className='items-center gap-2 flex md:hidden justify-center text-[32px] pb-10'><Atom className='h-8 w-8'/> buildlab</AuroraText>
             <Authentication />
           </div>
         </div>
@@ -40,4 +43,3 @@ const Auth = () => {
 }
 
 export default Auth
-
