@@ -26,15 +26,19 @@ export default function Home() {
                 <div className="fixed inset-0 bg-black/80 z-40" onClick={handleMenuClick}></div>
             )}
             <HomeSearch />
-            <div className="fixed left-5 top-4 md:hidden" onClick={handleMenuClick}>
-                <AlignLeft />
+
+            <div className='fixed top-0 flex justify-between w-full p-4 backdrop-blur-sm md:hidden'>
+                <div className="md:hidden" onClick={handleMenuClick}>
+                    <AlignLeft />
+                </div>
+                <div className="md:hidden">
+                    <span className='text-[20px]'>buildlab</span>
+                </div>
+                <div className="md:hidden">
+                    <CircleAlert />
+                </div>
             </div>
-            <div className="fixed left-1/2 transform -translate-x-1/2 top-4 md:hidden" onClick={handleMenuClick}>
-                <span className='text-[20px]'>buildlab</span>
-            </div>
-            <div className="fixed right-5 top-4 md:hidden" onClick={handleMenuClick}>
-                <CircleAlert/>
-            </div>
+           
         </div>
     );
 }
