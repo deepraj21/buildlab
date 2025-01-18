@@ -12,7 +12,6 @@ import {
     CalendarDays,
     Copy,
     Download,
-    Globe
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,6 @@ import {
 import { useEffect, useState, useRef } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SchemaType } from "@google/generative-ai";
-import { LinkPreviewFetcher } from "./link-preview-fetcher";
 import {
     ResizableHandle,
     ResizablePanel,
@@ -38,12 +36,15 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import BlurFade from "@/components/ui/blur-fade";
 import { HomeMarquee } from "./HomeMarquee";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs-circle"
 import axios from "axios";
 
+interface SearchResult {
+    title: string;
+    link: string;
+    snippet: string;
+}
 interface Results {
     text: string;
-    resources: string[];
     files: {
         name: string;
         content: string;
@@ -53,6 +54,7 @@ interface Results {
 interface Chats {
     query: string;
     response: Results;
+    resources: SearchResult[];
     responseTime: number;
     timestamp: Date;
 }
@@ -60,14 +62,6 @@ interface Chats {
 const HomeSearch = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchWebQuery, setSearchWebQuery] = useState("");
-    interface SearchResult {
-        title: string;
-        link: string;
-        snippet: string;
-    }
-
-    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [chatHistory, setChatHistory] = useState<Chats[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -84,7 +78,7 @@ const HomeSearch = () => {
     const [openedFiles, setOpenedFiles] = useState<Set<File>>(new Set());
 
     const API_KEY = import.meta.env.VITE_GOOGLE_SEARCH_API;
-    const CX = import.meta.env.VITE_SEARCH_ENGINE_ID; 
+    const CX = import.meta.env.VITE_SEARCH_ENGINE_ID;
 
     async function fetchSearchResults(query: string) {
         try {
@@ -95,27 +89,12 @@ const HomeSearch = () => {
                     q: query,
                 },
             });
-            return response.data.items; 
+            return response.data.items;
         } catch (error) {
             console.error('Error fetching search results:', error);
             return [];
         }
     }
-
-    const handleWebSearch = async () => {
-        if (!searchWebQuery.trim()) return;
-        setLoading(true);
-        setError(null);
-
-        try {
-            const results = await fetchSearchResults(searchWebQuery);
-            setSearchResults((prevResults) => [...prevResults, ...(results || [])]);
-        } catch {
-            setError("Failed to fetch search results. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleFileSelect = (file: File) => {
         setOpenedFiles((prevFiles) => {
@@ -197,11 +176,6 @@ const HomeSearch = () => {
             type: SchemaType.OBJECT,
             properties: {
                 text: { type: SchemaType.STRING, description: "Detailed explanation of the topic" },
-                resources: {
-                    type: SchemaType.ARRAY,
-                    items: { type: SchemaType.STRING },
-                    description: "Links to resources or documentation"
-                },
                 files: {
                     type: SchemaType.ARRAY,
                     items: {
@@ -232,10 +206,9 @@ const HomeSearch = () => {
             As an expert software developer, provide the following information for the query: "${searchQuery}"
             Make sure of the following things:
             1. In the response the text property should contain a to the point,specific and short explanation of the topic and do not add any codes in this.
-            2. The resources property should contain links to resources or documentation of any relevant to that topics atleast 2 and maximum 6.
-            3. The files property should contain files and its content related to the topic.
+            2. The files property should contain files and its content related to the topic and dont include markdown in file content.
 
-            NOTE: make sure if question is technical or related to programming, development, coding then provide code snippets every time with proper relevant resources.
+            NOTE: make sure if question is technical or related to programming, development, coding then provide code snippets in the files are mandatory.
             `;
             const startTime = Date.now();
 
@@ -245,13 +218,16 @@ const HomeSearch = () => {
 
             const duration = endTime - startTime;
 
+            const WebResources = await fetchSearchResults(searchQuery);
+
             const structuredResponse = JSON.parse(result.response.text());
-            console.log("Structured response:", structuredResponse);
+
             setChatHistory((prevChats) => [
                 ...prevChats,
                 {
                     query: searchQuery,
                     response: structuredResponse,
+                    resources: WebResources,
                     responseTime: duration,
                     timestamp: new Date(),
                 },
@@ -306,7 +282,7 @@ const HomeSearch = () => {
                             <div className="space-y-4">
                                 {/* Header */}
                                 {
-                                    chatHistory.length == 0 && searchResults.length == 0 && (
+                                    chatHistory.length == 0 && (
                                         <div className="transition-opacity duration-500">
                                             <div className="flex items-center justify-center mb-6">
                                                 <Atom className="w-20 h-20 animate-pulse text-[#20B8CD]" strokeWidth={1.3} />
@@ -356,24 +332,36 @@ const HomeSearch = () => {
                                                             </div>
 
 
-                                                            {chat.response.resources && (
-                                                                <div className="pt-4 w-[300px]">
+                                                            {chat.resources && (
+                                                                <div className="pt-4">
                                                                     <div className="flex gap-2 items-center">
                                                                         <Component className="h-5 w-5" />
-                                                                        <h2 className="text-xl">Resources:</h2>
+                                                                        <h2 className="text-xl">Resources from web:</h2>
                                                                     </div>
-                                                                    <div>
-                                                                        {chat.response.resources.map((resource) => (
-                                                                            <div className="pt-2">
-                                                                                <LinkPreviewFetcher url={resource} />
-                                                                            </div>
+                                                                    <div className="pt-2">
+                                                                        <div className="h-[390px] overflow-y-auto">
+                                                                            {chat.resources.map((result, index) => (
+                                                                                <div className="pb-2">
+                                                                                    <div key={index} className="p-2 bg-muted rounded-md">
+                                                                                        <a
+                                                                                            href={result.link}
+                                                                                            target="_blank"
+                                                                                            rel="noopener noreferrer"
+                                                                                            className="text-blue-500 hover:underline"
+                                                                                        >
+                                                                                            <h3>{result.title}</h3>
+                                                                                        </a>
+                                                                                        <p>{result.snippet}</p>
+                                                                                    </div>
+                                                                                </div>
 
-                                                                        ))}
+                                                                            ))}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             )}
                                                             {chat.response.files && (
-                                                                <div className="pt-4 w-[300px]">
+                                                                <div className="pt-2 w-[300px]">
                                                                     <div className="flex gap-2 items-center">
                                                                         <Code2 className="h-5 w-5" />
                                                                         <h2 className="text-xl">Code Files:</h2>
@@ -473,121 +461,45 @@ const HomeSearch = () => {
                                         </div>
                                     )
                                 }
-                                {
-                                    searchResults.length > 0 && (
-                                        <>
-                                            <div className="space-y-4 pt-1 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
-                                                {searchResults.map((result, index) => (
-                                                    <div key={index} className="p-4 bg-muted rounded-md">
-                                                        <a
-                                                            href={result.link}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-blue-500 hover:underline"
-                                                        >
-                                                            <h3>{result.title}</h3>
-                                                        </a>
-                                                        <p>{result.snippet}</p>
-                                                    </div>
-                                                ))}
-                                                {!loading && searchResults.length === 0 && searchWebQuery && (
-                                                    <p className="text-gray-500">No results found.</p>
-                                                )}
-                                            </div>
-                                        </>
-                                        
-                                    )
-                                }
-
-                                
-
                                 {/* Search Input */}
-                                <div className="relative bg-muted/40 rounded-full p-1">
-                                    <Tabs defaultValue="search" className="w-full">
-                                        <TabsList className="absolute left-2 top-1/2 -translate-y-1/2 h-auto bg-muted/20 z-10">
-                                            <TabsTrigger value="search">
-                                                <button className="w-6 h-6 rounded-full flex items-center justify-center">
-                                                    <Search className="w-4 h-4" />
-                                                </button>
-                                            </TabsTrigger>
-                                            <TabsTrigger value="globe">
-                                                <button className="w-6 h-6 rounded-full flex items-center justify-center">
-                                                    <Globe className="w-4 h-4" />
-                                                </button>
-                                            </TabsTrigger>
-                                        </TabsList>
-
-                                        <TabsContent value="search" className="m-0 focus-visible:outline-none">
-                                            <div className="relative">
-                                                <Input
-                                                    placeholder="Search buildlabAI..."
-                                                    className="w-full rounded-full py-6 pl-20 pr-[55px] border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-                                                    value={searchQuery}
-                                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                                    disabled={inputDisabled}
-                                                    onKeyPress={(e) => {
-                                                        if (e.key === 'Enter') {
-                                                            handleSearch();
-                                                        }
-                                                    }}
-                                                />
-                                                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-4">
-                                                    <Button
-                                                        className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
-                                                        variant="secondary"
-                                                        size="sm"
-                                                        onClick={handleSearch}
-                                                        disabled={loading}
-                                                    >
-                                                        {loading ? <Atom className="animate-spin" /> : <ArrowUp />}
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                            {showScrollButton && (
-                                                <Button
-                                                    className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
-                                                    onClick={scrollToBottom}
-                                                    variant="secondary"
-                                                >
-                                                    <ArrowDown className="w-4 h-4" />
-                                                </Button>
-                                            )}
-                                        </TabsContent>
-
-                                        <TabsContent value="globe" className="m-0 focus-visible:outline-none">
-                                            <div className="relative">
-                                                <Input
-                                                    placeholder="Search the web..."
-                                                    className="w-full rounded-full py-6 pl-20 pr-[55px] border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-                                                    value={searchWebQuery}
-                                                    onChange={(e) => setSearchWebQuery(e.target.value)}
-                                                    onKeyPress={(e) => {
-                                                        if (e.key === "Enter") handleWebSearch();
-                                                    }}
-                                                />
-                                                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-4">
-                                                    <Button
-                                                        className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
-                                                        variant="secondary"
-                                                        size="sm"
-                                                        onClick={handleWebSearch}
-                                                        disabled={loading}
-                                                    >
-                                                        {loading ? <Globe className="animate-spin" /> : <Globe />}
-                                                    </Button>
-                                                </div>
-                                                 {showScrollButton && (
-                                                <Button
-                                                    className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
-                                                    onClick={scrollToBottom}
-                                                    variant="secondary"
-                                                >
-                                                    <ArrowDown className="w-4 h-4" />
-                                                </Button>
-                                            )}
-                                            </div>
-                                        </TabsContent>
-                                    </Tabs>
+                                <div className="p-2 rounded-full bg-muted/40">
+                                    <div className="relative">
+                                        <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-4">
+                                            <Search className="w-4 h-4" />
+                                        </div>
+                                        <Input
+                                            placeholder="Search anything..."
+                                            className="w-full rounded-full py-6 pl-10 pr-[55px]"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            disabled={inputDisabled}
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    handleSearch();
+                                                }
+                                            }}
+                                        />
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
+                                            <Button
+                                                className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
+                                                variant="secondary"
+                                                size="sm"
+                                                onClick={handleSearch}
+                                                disabled={loading}
+                                            >
+                                                {loading ? <Atom className="animate-spin" /> : <ArrowUp />}
+                                            </Button>
+                                        </div>
+                                        {showScrollButton && (
+                                            <Button
+                                                className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
+                                                onClick={scrollToBottom}
+                                                variant='secondary'
+                                            >
+                                                <ArrowDown className="w-4 h-4" />
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -595,7 +507,6 @@ const HomeSearch = () => {
 
                     {splitView && openedFiles.size > 0 && (
                         <>
-                            
                             <ResizableHandle withHandle className="hidden md:flex" />
                             <ResizablePanel defaultSize={60} minSize={30} className="hidden md:block">
                                 <motion.div
@@ -603,42 +514,42 @@ const HomeSearch = () => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ duration: 0.5 }}
                                 >
-                                <div className="border-b w-full overflow-x-auto">
-                                    <div className="flex flex-row w-fit items-center bg-muted/30">
-                                        {Array.from(openedFiles).map((file) => (
-                                            <div
-                                                key={file.name}
-                                                className={`flex items-center gap-2 cursor-pointer border-r `}
-                                                onClick={() => setSelectedFile(file)}
-                                            >
-                                                <div className={`flex flex-row items-center p-1 gap-1 ${selectedFile === file ? 'border-b-2 dark:border-white border-zinc-900' : ''}`}>
-                                                   <h2 className="text-md">{file.name}</h2>
-                                                <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} /> 
-                                                </div>
-                                                
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                    <div className="border-b w-full overflow-x-auto">
+                                        <div className="flex flex-row w-fit items-center bg-muted/30">
+                                            {Array.from(openedFiles).map((file) => (
+                                                <div
+                                                    key={file.name}
+                                                    className={`flex items-center gap-2 cursor-pointer border-r `}
+                                                    onClick={() => setSelectedFile(file)}
+                                                >
+                                                    <div className={`flex flex-row items-center p-1 gap-1 ${selectedFile === file ? 'border-b-2 dark:border-white border-zinc-900' : ''}`}>
+                                                        <h2 className="text-md">{file.name}</h2>
+                                                        <X className="h-4 w-4 cursor-pointer" onClick={() => handleFileClose(file)} />
+                                                    </div>
 
-                                <div className="h-[93vh] overflow-y-auto ">
-                                    <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight} customStyle={{ backgroundColor: 'transparent' }}>
-                                        {selectedFile?.content || ""}
-                                    </SyntaxHighlighter>
-                                    <div className="pt-4 pl-2 flex flex-row gap-2">
-                                        <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyCodeToClipboard(selectedFile?.content || "")}>
-                                            <Copy className="h-3 w-3" />
-                                            <h2 className="text-[12px]">Copy</h2>
-                                        </div>
-                                        <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => { if (selectedFile) downloadCode(selectedFile); }}>
-                                            <Download className="h-3 w-3" />
-                                            <h2 className="text-[12px]">Download</h2>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                </div>
+
+                                    <div className="h-[93vh] overflow-y-auto ">
+                                        <SyntaxHighlighter language="python" showLineNumbers style={tomorrowNight} customStyle={{ backgroundColor: 'transparent' }}>
+                                            {selectedFile?.content || ""}
+                                        </SyntaxHighlighter>
+                                        <div className="pt-4 pl-2 flex flex-row gap-2">
+                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyCodeToClipboard(selectedFile?.content || "")}>
+                                                <Copy className="h-3 w-3" />
+                                                <h2 className="text-[12px]">Copy</h2>
+                                            </div>
+                                            <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => { if (selectedFile) downloadCode(selectedFile); }}>
+                                                <Download className="h-3 w-3" />
+                                                <h2 className="text-[12px]">Download</h2>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </motion.div>
                             </ResizablePanel>
-                            
+
                         </>
                     )}
 
