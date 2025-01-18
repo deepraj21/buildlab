@@ -1,5 +1,5 @@
 import { Atom, Search, Globe, Inbox } from 'lucide-react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import SpaceNameDisplay from '../SpaceNameDisplay/SpaceNameDisplay'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
@@ -12,14 +12,46 @@ import {
 } from "@/components/ui/sheet"
 import ProfileHeader from '../HomeSearch/ProfileHeader'
 import CreateSpace from '../CreateSpace/CreateSpace'
+import axios from '@/config/axios'
+
+interface Project {
+    _id: string;
+    name: string;
+    description: string;
+    users: { length: number };
+}
 
 const DesktopSidebar = () => {
     const navigate = useNavigate()
     const location = useLocation();
     const isLoggedIn = localStorage.getItem('token');
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
-        <SpaceNameDisplay />
-    }, [isLoggedIn])
+        <SpaceNameDisplay projects={projects} isLoading={isLoading} />
+    }, [isLoggedIn, isLoading, projects])
+
+    useEffect(() => {
+    fetchProjects();
+}, []);
+
+    const fetchProjects = () => {
+        setIsLoading(true);
+        axios.get('/projects/all')
+            .then((res) => {
+                setProjects(res.data.projects);
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setIsLoading(false);
+            });
+    };
+
+    const addProject = (project: Project) => {
+    setProjects((prevProjects) => [...prevProjects, project]);
+};
     
     return (
         <div className="md:w-24 w-20 flex flex-col items-center py-2 space-y-3 justify-between bg-zinc-300 dark:bg-zinc-800 h-full">
@@ -54,7 +86,10 @@ const DesktopSidebar = () => {
                                             </SheetDescription>
                                         </SheetHeader>
                                         <SheetDescription className='p-4 border-b'>
-                                            <CreateSpace />
+                                            <CreateSpace addProject={addProject}/>
+                                        </SheetDescription >
+                                        <SheetDescription className='p-4 border-b h-[550px] overflow-y-auto'>
+                                            <SpaceNameDisplay projects={projects} isLoading={isLoading}  />
                                         </SheetDescription>
                                     </SheetContent>
                                 </Sheet>

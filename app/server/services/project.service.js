@@ -2,7 +2,7 @@ import projectModel from '../models/project.model.js';
 import mongoose from 'mongoose';
 
 export const createProject = async ({
-    name, userId
+    name,description, userId
 }) => {
     if (!name) {
         throw new Error('Name is required')

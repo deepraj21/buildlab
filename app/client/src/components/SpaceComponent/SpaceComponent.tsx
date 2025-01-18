@@ -201,13 +201,13 @@ const SpaceComponent: React.FC = () => {
     // };
 
     return (
-        <div className='pt-2 pr-2 pb-2 w-full'>
+        <div className='md:p-2 md:ml-[87px] w-full'>
             <main className="flex rounded-md bg-white dark:bg-zinc-900 border overflow-hidden">
                 {/* Left Section */}
-                <section className="left relative flex flex-col md:w-[30%] w-full border-r" style={{ height: 'calc(100vh - 20px)' }}>
+                <section className="left relative flex flex-col md:w-[30%] w-full border-r md:h-[97.8vh] h-[99.8vh]">
                     {/* Header */}
                     <div className="rounded-none border-b flex flex-row justify-between p-2 items-center">
-                        <div className='flex flex-row gap-2'>
+                        <div className='flex flex-row gap-2 pl-8 md:pl-0'>
                             <div className="md:w-14 md:h-14 w-14 h-14 flex items-center justify-center my-auto rounded-full dark:bg-zinc-800 bg-stone-100">
                                 <span className="text-sm text-foreground">
                                     {project.name.slice(0, 2).toUpperCase()}

@@ -11,7 +11,7 @@ const ExploreComponent = () => {
         ? articles
         : articles.filter(article => article.category === selectedCategory)
     return (
-        <div className="md:p-2 w-full">
+        <div className="md:p-2 md:ml-[87px] w-full">
             <div className="border h-full flex flex-col justify-center items-center rounded-md bg-white dark:bg-zinc-900">
                 <div className='max-w-4xl w-full'>
                     <nav className="sticky pt-4 z-10 ">
