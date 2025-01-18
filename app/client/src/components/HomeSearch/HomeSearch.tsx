@@ -11,7 +11,8 @@ import {
     Timer,
     CalendarDays,
     Copy,
-    Download
+    Download,
+    Globe
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,8 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import BlurFade from "@/components/ui/blur-fade";
 import { HomeMarquee } from "./HomeMarquee";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs-circle"
+import axios from "axios";
 
 interface Results {
     text: string;
@@ -57,6 +60,14 @@ interface Chats {
 const HomeSearch = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
+    const [searchWebQuery, setSearchWebQuery] = useState("");
+    interface SearchResult {
+        title: string;
+        link: string;
+        snippet: string;
+    }
+
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [chatHistory, setChatHistory] = useState<Chats[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -71,6 +82,40 @@ const HomeSearch = () => {
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [openedFiles, setOpenedFiles] = useState<Set<File>>(new Set());
+
+    const API_KEY = import.meta.env.VITE_GOOGLE_SEARCH_API;
+    const CX = import.meta.env.VITE_SEARCH_ENGINE_ID; 
+
+    async function fetchSearchResults(query: string) {
+        try {
+            const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
+                params: {
+                    key: API_KEY,
+                    cx: CX,
+                    q: query,
+                },
+            });
+            return response.data.items; 
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+            return [];
+        }
+    }
+
+    const handleWebSearch = async () => {
+        if (!searchWebQuery.trim()) return;
+        setLoading(true);
+        setError(null);
+
+        try {
+            const results = await fetchSearchResults(searchWebQuery);
+            setSearchResults((prevResults) => [...prevResults, ...(results || [])]);
+        } catch {
+            setError("Failed to fetch search results. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleFileSelect = (file: File) => {
         setOpenedFiles((prevFiles) => {
@@ -261,7 +306,7 @@ const HomeSearch = () => {
                             <div className="space-y-4">
                                 {/* Header */}
                                 {
-                                    chatHistory.length == 0 && (
+                                    chatHistory.length == 0 && searchResults.length == 0 && (
                                         <div className="transition-opacity duration-500">
                                             <div className="flex items-center justify-center mb-6">
                                                 <Atom className="w-20 h-20 animate-pulse text-[#20B8CD]" strokeWidth={1.3} />
@@ -428,47 +473,121 @@ const HomeSearch = () => {
                                         </div>
                                     )
                                 }
+                                {
+                                    searchResults.length > 0 && (
+                                        <>
+                                            <div className="space-y-4 pt-1 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
+                                                {searchResults.map((result, index) => (
+                                                    <div key={index} className="p-4 bg-muted rounded-md">
+                                                        <a
+                                                            href={result.link}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-blue-500 hover:underline"
+                                                        >
+                                                            <h3>{result.title}</h3>
+                                                        </a>
+                                                        <p>{result.snippet}</p>
+                                                    </div>
+                                                ))}
+                                                {!loading && searchResults.length === 0 && searchWebQuery && (
+                                                    <p className="text-gray-500">No results found.</p>
+                                                )}
+                                            </div>
+                                        </>
+                                        
+                                    )
+                                }
+
+                                
 
                                 {/* Search Input */}
-                                <div className="p-2 rounded-full bg-muted/40">
-                                    <div className="relative">
-                                        <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-4">
-                                            <Search className="w-4 h-4" />
-                                        </div>
-                                        <Input
-                                            placeholder="Search anything..."
-                                            className="w-full rounded-full py-6 pl-10 pr-[55px]"
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            disabled={inputDisabled}
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    handleSearch();
-                                                }
-                                            }}
-                                        />
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
-                                            <Button
-                                                className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
-                                                variant="secondary"
-                                                size="sm"
-                                                onClick={handleSearch}
-                                                disabled={loading}
-                                            >
-                                                {loading ? <Atom className="animate-spin" /> : <ArrowUp />}
-                                            </Button>
-                                        </div>
-                                        {showScrollButton && (
-                                            <Button
-                                                className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
-                                                onClick={scrollToBottom}
-                                                variant='secondary'
-                                            >
-                                                <ArrowDown className="w-4 h-4" />
-                                            </Button>
-                                        )}
-                                    </div>
+                                <div className="relative bg-muted/40 rounded-full p-1">
+                                    <Tabs defaultValue="search" className="w-full">
+                                        <TabsList className="absolute left-2 top-1/2 -translate-y-1/2 h-auto bg-muted/20 z-10">
+                                            <TabsTrigger value="search">
+                                                <button className="w-6 h-6 rounded-full flex items-center justify-center">
+                                                    <Search className="w-4 h-4" />
+                                                </button>
+                                            </TabsTrigger>
+                                            <TabsTrigger value="globe">
+                                                <button className="w-6 h-6 rounded-full flex items-center justify-center">
+                                                    <Globe className="w-4 h-4" />
+                                                </button>
+                                            </TabsTrigger>
+                                        </TabsList>
 
+                                        <TabsContent value="search" className="m-0 focus-visible:outline-none">
+                                            <div className="relative">
+                                                <Input
+                                                    placeholder="Search buildlabAI..."
+                                                    className="w-full rounded-full py-6 pl-20 pr-[55px] border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    disabled={inputDisabled}
+                                                    onKeyPress={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            handleSearch();
+                                                        }
+                                                    }}
+                                                />
+                                                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-4">
+                                                    <Button
+                                                        className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
+                                                        variant="secondary"
+                                                        size="sm"
+                                                        onClick={handleSearch}
+                                                        disabled={loading}
+                                                    >
+                                                        {loading ? <Atom className="animate-spin" /> : <ArrowUp />}
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            {showScrollButton && (
+                                                <Button
+                                                    className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
+                                                    onClick={scrollToBottom}
+                                                    variant="secondary"
+                                                >
+                                                    <ArrowDown className="w-4 h-4" />
+                                                </Button>
+                                            )}
+                                        </TabsContent>
+
+                                        <TabsContent value="globe" className="m-0 focus-visible:outline-none">
+                                            <div className="relative">
+                                                <Input
+                                                    placeholder="Search the web..."
+                                                    className="w-full rounded-full py-6 pl-20 pr-[55px] border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                                                    value={searchWebQuery}
+                                                    onChange={(e) => setSearchWebQuery(e.target.value)}
+                                                    onKeyPress={(e) => {
+                                                        if (e.key === "Enter") handleWebSearch();
+                                                    }}
+                                                />
+                                                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-4">
+                                                    <Button
+                                                        className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
+                                                        variant="secondary"
+                                                        size="sm"
+                                                        onClick={handleWebSearch}
+                                                        disabled={loading}
+                                                    >
+                                                        {loading ? <Globe className="animate-spin" /> : <Globe />}
+                                                    </Button>
+                                                </div>
+                                                 {showScrollButton && (
+                                                <Button
+                                                    className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
+                                                    onClick={scrollToBottom}
+                                                    variant="secondary"
+                                                >
+                                                    <ArrowDown className="w-4 h-4" />
+                                                </Button>
+                                            )}
+                                            </div>
+                                        </TabsContent>
+                                    </Tabs>
                                 </div>
                             </div>
                         </div>
