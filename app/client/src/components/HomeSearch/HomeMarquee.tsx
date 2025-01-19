@@ -87,8 +87,8 @@ export function HomeMarquee({ setSearchQuery }: { setSearchQuery: (query: string
                     <ReviewCard key={`second-${index}`} {...review} onClick={() => setSearchQuery(review.body)} />
                 ))}
             </Marquee>
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-zinc-900 to-transparent dark:from-zinc-900"></div>
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-zinc-900 to-transparent dark:from-zinc-900"></div>
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent dark:from-zinc-900"></div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-zinc-900"></div>
         </div>
     );
 }

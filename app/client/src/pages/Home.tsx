@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import DesktopSidebar from '@/components/Sidebar/DesktopSidebar';
 import HomeSearch from '@/components/HomeSearch/HomeSearch';
-import { AlignLeft, CircleAlert } from 'lucide-react';
+import {AlertCircle, GripVertical } from 'lucide-react';
+import {
+    Sheet,
+    SheetContent,
+    SheetTrigger,
+} from "@/components/ui/sheet"
+import AboutBuildLab from '@/components/About/AboutBuildLab';
 
 export default function Home() {
     const theme = localStorage.getItem('vite-ui-theme');
@@ -28,14 +34,23 @@ export default function Home() {
             <HomeSearch />
 
             <div className='fixed top-0 flex justify-between w-full p-2 backdrop-blur-sm md:hidden items-center'>
-                <div className="md:hidden" onClick={handleMenuClick}>
-                    <AlignLeft />
+                <div className='flex items-center gap-2'>
+                    <div className="md:hidden" onClick={handleMenuClick}>
+                        <GripVertical className='h-5 w-5' />
+                    </div>
+                    <div className="md:hidden">
+                        <span className='text-[20px]'>BuildLab</span>
+                    </div>
                 </div>
                 <div className="md:hidden">
-                    <span className='text-[20px]'>buildlab</span>
-                </div>
-                <div className="md:hidden">
-                    <CircleAlert />
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <AlertCircle style={{ transform: 'rotate(180deg)' }} className='h-5 w-5'/>
+                        </SheetTrigger>
+                        <SheetContent>
+                            <AboutBuildLab/>
+                        </SheetContent>
+                    </Sheet>
                 </div>
             </div>
         </div>

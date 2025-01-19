@@ -37,6 +37,7 @@ import { motion } from "framer-motion";
 import BlurFade from "@/components/ui/blur-fade";
 import { HomeMarquee } from "./HomeMarquee";
 import axios from "axios";
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface SearchResult {
     title: string;
@@ -311,12 +312,8 @@ const HomeSearch = () => {
                                                     <BlurFade delay={0.25} inView>
                                                         <div className="text-[34px] flex flex-row items-center gap-2">{chat.query}</div>
                                                         <div className="flex flex-col gap-2">
-                                                            <div className="flex gap-1 items-center border bg-muted w-fit pl-1 pr-1 rounded-md">
-                                                                <Timer className="h-3 w-3" />
-                                                                <h2 className="text-[12px]">Response Time: {chat.responseTime}ms</h2>
-                                                            </div>
                                                             <div className="flex gap-1 border items-center bg-muted w-fit pl-1 pr-1 rounded-md">
-                                                                <CalendarDays className="h-3 w-3" />
+                                                                <CalendarDays className="h-3 w-3 text-[#20B8CD]" />
                                                                 <h2 className="text-[12px]">{chat.timestamp.toString().split('(')[0].trim()}</h2>
                                                             </div>
                                                         </div>
@@ -324,7 +321,7 @@ const HomeSearch = () => {
                                                     <BlurFade delay={0.25 * 2} inView>
                                                         <div className="pt-6">
                                                             <div className="flex gap-2 items-center">
-                                                                <Atom className="h-5 w-5" />
+                                                                <Atom className="h-5 w-5 text-[#20B8CD]" />
                                                                 <h2 className="text-xl">Response:</h2>
                                                             </div>
                                                             <div className="pt-2">
@@ -335,35 +332,40 @@ const HomeSearch = () => {
                                                             {chat.resources && (
                                                                 <div className="pt-4">
                                                                     <div className="flex gap-2 items-center">
-                                                                        <Component className="h-5 w-5" />
+                                                                        <Component className="h-5 w-5 text-[#20B8CD]" />
                                                                         <h2 className="text-xl">Resources from web:</h2>
                                                                     </div>
                                                                     <div className="pt-2">
-                                                                        <div className="h-[390px] overflow-y-auto">
+                                                                        <ScrollArea className="h-[390px]">
                                                                             {chat.resources.map((result, index) => (
-                                                                                <div className="pb-2">
-                                                                                    <div key={index} className="p-2 bg-muted rounded-md">
+                                                                                <div className="pb-2 pr-3">
+                                                                                    <div key={index} className="border rounded-md">
+                                                                                        <div className="border-b p-1 bg-muted/90">
                                                                                         <a
                                                                                             href={result.link}
                                                                                             target="_blank"
                                                                                             rel="noopener noreferrer"
                                                                                             className="text-blue-500 hover:underline"
                                                                                         >
-                                                                                            <h3>{result.title}</h3>
+                                                                                            <p className="text-[15px]">{result.title}</p>
                                                                                         </a>
-                                                                                        <p>{result.snippet}</p>
+                                                                                        </div>
+                                                                                        <div className="p-1">
+                                                                                        <p className="text-[12px]">{result.snippet}</p>
+                                                                                        </div>
+                                                                                        
                                                                                     </div>
                                                                                 </div>
 
                                                                             ))}
-                                                                        </div>
+                                                                        </ScrollArea>
                                                                     </div>
                                                                 </div>
                                                             )}
                                                             {chat.response.files && (
                                                                 <div className="pt-2 w-[300px]">
                                                                     <div className="flex gap-2 items-center">
-                                                                        <Code2 className="h-5 w-5" />
+                                                                        <Code2 className="h-5 w-5 text-[#20B8CD]" />
                                                                         <h2 className="text-xl">Code Files:</h2>
                                                                     </div>
                                                                     <div>
@@ -442,18 +444,25 @@ const HomeSearch = () => {
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                            <div className="pt-4 flex flex-row gap-2">
+                                                            <div className="flex flex-row justify-between items-end">
+                                                               <div className="pt-4 flex flex-row gap-2">
                                                                 <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyChatToClipboard(chat)}>
-                                                                    <Copy className="h-3 w-3" />
+                                                                    <Copy className="h-3 w-3 text-[#20B8CD]" />
                                                                     <h2 className="text-[12px]">Copy</h2>
                                                                 </div>
                                                                 <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => downloadChatAsJson(chat)}>
-                                                                    <Download className="h-3 w-3" />
+                                                                    <Download className="h-3 w-3 text-[#20B8CD]" />
                                                                     <h2 className="text-[12px]">Download</h2>
                                                                 </div>
+                                                               </div> 
+                                                                <div className="flex gap-1 items-center border bg-muted w-fit pl-1 pr-1 rounded-md">
+                                                                    <Timer className="h-3 w-3 text-[#20B8CD]" />
+                                                                    <h2 className="text-[12px]">Res Time: {chat.responseTime}ms</h2>
+                                                                </div>
                                                             </div>
+                                                            
                                                         </div>
-                                                        <hr className="border-t border-zinc-700 mt-4" />
+                                                        <hr className="border-t mt-4" />
                                                     </BlurFade>
                                                 </div>
 
@@ -462,7 +471,7 @@ const HomeSearch = () => {
                                     )
                                 }
                                 {/* Search Input */}
-                                <div className="p-2 rounded-full bg-muted/40">
+                                <div className="p-2 rounded-full bg-muted">
                                     <div className="relative">
                                         <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-4">
                                             <Search className="w-4 h-4" />

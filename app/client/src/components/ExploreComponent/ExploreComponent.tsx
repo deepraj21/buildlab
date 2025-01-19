@@ -85,10 +85,10 @@ const ExploreComponent = () => {
                             className="object-cover w-full h-full"
                         />
                     </div>
-                    <div className="flex flex-col gap-2 p-4 flex-grow bg-zinc-900/80 backdrop-blur-sm">
-                        <h2 className="text-xl font-semibold text-white">{article.title}</h2>
-                        <p className="text-gray-300 flex-grow">{article.excerpt}</p>
-                        <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <div className="flex flex-col gap-2 p-4 flex-grow bg-muted/80 backdrop-blur-sm">
+                        <h2 className="text-xl font-semibold">{article.title}</h2>
+                        <p className="flex-grow">{article.excerpt}</p>
+                        <div className="flex items-center gap-2 text-sm">
                             <span>{article.author}</span>
                         </div>
                     </div>
@@ -96,7 +96,7 @@ const ExploreComponent = () => {
             </Card>
             {isMobile && index < filteredArticles.length - 1 && (
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black-900 to-transparent z-20 flex items-center justify-center">
-                    <div className="w-20 h-2 bg-white rounded-full opacity-50 animate-bounce" />
+                    <div className="w-20 h-2 darK:bg-white bg-zinc-800 rounded-full opacity-50 animate-bounce" />
                 </div>
             )}
         </motion.div>
@@ -104,11 +104,11 @@ const ExploreComponent = () => {
 
     return (
         <div className="md:p-2 md:ml-[87px] w-full">
-            <div className="border h-full flex flex-col justify-center items-center rounded-md bg-zinc-900">
+            <div className="border h-full flex flex-col justify-center items-center rounded-md bg-white dark:bg-zinc-900">
                 <div className='max-w-4xl w-full'>
-                    <nav className="sticky top-0 z-30 bg-zinc-900/80 backdrop-blur-sm">
-                        <div className="container mx-auto px-4">
-                            <div className="flex items-center gap-6 overflow-x-auto py-4 no-scrollbar">
+                    <nav className="sticky top-0 z-30 backdrop-blur-sm">
+                        <div className="container mx-auto px-3">
+                            <div className="flex items-center gap-2 overflow-x-auto py-4 no-scrollbar">
                                 {categories.map(category => (
                                     <button
                                         key={category.id}
@@ -116,9 +116,9 @@ const ExploreComponent = () => {
                                             setSelectedCategory(category.id)
                                             setCurrentCardIndex(0)
                                         }}
-                                        className={`whitespace-nowrap px-4 py-2 rounded-full text-sm transition-colors ${selectedCategory === category.id
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'text-gray-400 hover:text-white'
+                                        className={`whitespace-nowrap px-3 py-1 rounded-full text-sm transition-colors ${selectedCategory === category.id
+                                            ? 'bg-[#20B8CD] text-primary-foreground'
+                                                : 'text-gray-400 dark:hover:text-white hover:text-gray-600'
                                             }`}
                                     >
                                         {category.name}

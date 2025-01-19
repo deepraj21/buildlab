@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Input } from "../../ui/input"
 import { Button } from "../../ui/button"
 import { toast } from "sonner"
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Loader } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 const Signup = () => {
@@ -85,8 +85,7 @@ const Signup = () => {
                 >
                     {isLoading ? (
                         <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Registering...
+                            <Loader className="mr-2 h-4 w-4 animate-spin" />
                         </>
                     ) : (
                         'Register'
