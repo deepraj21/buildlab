@@ -28,7 +28,7 @@ export const articles: Article[] = [
     title: 'Breakthrough in Quantum Computing',
     excerpt: 'Scientists achieve major milestone in quantum computing research...',
     category: 'tech-science',
-    image: '/placeholder.svg?height=400&width=600',
+    image: 'https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg?cs=srgb&dl=pexels-stywo-1054218.jpg&fm=jpg',
     author: 'quantum_researcher'
   },
   {
@@ -36,7 +36,7 @@ export const articles: Article[] = [
     title: 'Global Markets Rally',
     excerpt: 'Stock markets worldwide show strong performance...',
     category: 'finance',
-    image: '/placeholder.svg?height=300&width=600',
+    image: 'https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_960_720.jpg',
     author: 'market_analyst'
   },
   {
@@ -44,7 +44,7 @@ export const articles: Article[] = [
     title: 'New Art Exhibition Opens',
     excerpt: 'Contemporary artists showcase groundbreaking works...',
     category: 'arts-culture',
-    image: '/placeholder.svg?height=500&width=600',
+    image: 'https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?cs=srgb&dl=pexels-souvenirpixels-414612.jpg&fm=jpg',
     author: 'art_critic'
   },
   {
@@ -52,7 +52,7 @@ export const articles: Article[] = [
     title: 'Championship Finals Results',
     excerpt: 'Dramatic conclusion to the season as underdogs prevail...',
     category: 'sports',
-    image: '/placeholder.svg?height=350&width=600',
+    image: 'https://cdn.pixabay.com/photo/2015/12/01/20/28/road-1072821_1280.jpg',
     author: 'sports_reporter'
   },
   {
