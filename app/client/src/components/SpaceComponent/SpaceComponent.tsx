@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { EllipsisVertical, Search, MessageSquareLock, ArrowUp, PlusCircle, X, MinusCircle } from 'lucide-react';
+import { EllipsisVertical, Search, MessageSquareLock, ArrowUp, PlusCircle, X, MinusCircle, Code2Icon, MessageSquareTextIcon } from 'lucide-react';
 import { Badge } from "@/components/ui/badge"
 import {
     DropdownMenu,
@@ -22,6 +22,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SpaceInfo } from './SpaceInfo';
 import { format } from 'date-fns';
+import {
+    SandpackProvider,
+    SandpackLayout,
+    SandpackCodeEditor,
+    SandpackPreview,
+    SandpackFileExplorer,
+} from "@codesandbox/sandpack-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs-circle"
 
 const md: MarkdownIt = new MarkdownIt({
     html: true,
@@ -61,6 +69,7 @@ interface Project {
 
 const SpaceComponent: React.FC = () => {
     const location = useLocation();
+    const [showCode, setShowCode] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<Set<string>>(new Set());
     const [project] = useState<Project>(location.state.project);
@@ -69,7 +78,6 @@ const SpaceComponent: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     // const [fileTree, setFileTree] = useState<FileTree>({});
     const user = localStorage.getItem('spaceUser');
-    const [previousChats, setPreviousChats] = useState<Message[]>([]);
 
     const handleUserClick = (id: string) => {
         setSelectedUserId((prevSelectedUserId) => {
@@ -104,7 +112,7 @@ const SpaceComponent: React.FC = () => {
         const timestamp = new Date().toISOString();
 
         const newMessage = {
-            _id: Date.now().toString(), 
+            _id: Date.now().toString(),
             message,
             sender: { _id: user || '', email: '' },
             timestamp,
@@ -115,34 +123,10 @@ const SpaceComponent: React.FC = () => {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         setMessage('');
 
-        axios.post('/projects/save-chat', {
-            projectId: project._id,
-            message: newMessage,
-        }).catch(console.error);
     };
 
     useEffect(() => {
-        if (!project._id) return;
-
-        axios
-            .get(`/projects/get-chats/${project._id}`)
-            .then((res) => {
-                console.log('Previous chats:', res.data.chats);
-                setPreviousChats(res.data.chats); // Update previousChats here
-            })
-            .catch(console.error);
-    }, [project._id]);
-
-    useEffect(() => {
         if (!location.state || !location.state.project) return;
-
-        // axios
-        //     .get(`/projects/get-project/${location.state.project._id}`)
-        //     .then((res) => {
-        //         setProject(res.data.project);
-        //         setFileTree(res.data.project.fileTree || {});
-        //     })
-        //     .catch(console.error);
 
         axios
             .get('/users/all')
@@ -160,7 +144,6 @@ const SpaceComponent: React.FC = () => {
         const handleMessage = (data: unknown) => {
             const messageData = data as Message;
 
-            // Prevent duplicates by checking if the message already exists
             setMessages((prevMessages) => {
                 const exists = prevMessages.some(
                     (msg) => msg.timestamp === messageData.timestamp && msg.sender._id === messageData.sender._id
@@ -168,123 +151,174 @@ const SpaceComponent: React.FC = () => {
                 return exists ? prevMessages : [...prevMessages, messageData];
             });
 
-            // Update file tree if message is from "ai" and contains file tree data
-            // if (messageData.sender._id === 'ai') {
-            //     try {
-            //         const messageObject = JSON.parse(messageData.message);
-            //         if (messageObject.fileTree) {
-            //             setFileTree(messageObject.fileTree || {});
-            //         }
-            //     } catch (error) {
-            //         console.error('Error parsing AI message:', error);
-            //     }
-            // }
         };
 
         receiveMessage('project-message', handleMessage);
 
         return () => {
-            socket.disconnect(); // Clean up socket connection
+            socket.disconnect();
         };
     }, [project._id]);
-
-    // const saveFileTree = (ft: FileTree) => {
-    //     axios
-    //         .put('/projects/update-file-tree', {
-    //             projectId: project._id,
-    //             fileTree: ft,
-    //         })
-    //         .then((res) => {
-    //             console.log(res.data);
-    //         })
-    //         .catch(console.error);
-    // };
 
     return (
         <div className='md:p-2 md:ml-[87px] w-full'>
             <main className="flex rounded-md bg-white dark:bg-zinc-900 border overflow-hidden">
                 {/* Left Section */}
-                <section className="left relative flex flex-col md:w-[30%] w-full border-r md:h-[97.8vh] h-[99.8vh]">
-                    {/* Header */}
-                    <div className="rounded-none border-b flex flex-row justify-between p-2 items-center">
-                        <div className='flex flex-row gap-2 pl-8 md:pl-0'>
-                            <div className="md:w-14 md:h-14 w-14 h-14 flex items-center justify-center my-auto rounded-full dark:bg-zinc-800 bg-stone-100">
-                                <span className="text-sm text-foreground">
-                                    {project.name.slice(0, 2).toUpperCase()}
-                                </span>
-                            </div>
-                            <div className='flex flex-col'>
-                                <span className='text-[23px]'>{project.name}</span>
-                                <Sheet>
-                                    <SheetTrigger><span className='text-[10px]'>tap here for space info</span></SheetTrigger>
-                                    <SpaceInfo />
-                                </Sheet>
-                            </div>
-                        </div>
-                        <div>
-                            <Button variant="ghost" size='sm' className='rounded-full w-10 h-10'><Search /></Button>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger>
-                                    <Button variant="ghost" size='sm' className='rounded-full w-10 h-10'><EllipsisVertical /></Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem className='cursor-pointer' onClick={() => { setIsModalOpen(true) }} >
-                                        <PlusCircle />
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className='cursor-pointer' >
-                                        <MinusCircle />
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    </div>
 
-                    {/* Conversation Area */}
-                    <ScrollArea className="h-full">
-                        <div className="p-4 space-y-1">
-                            <div className="items-center flex flex-col pb-2">
-                                <Badge variant="secondary" className="text-center text-[10px] w-fit">
-                                    <MessageSquareLock className="h-3 w-3 mr-2" />Messages are end-to-end encrypted.
-                                </Badge>
+                {
+                    !showCode &&
+                    (
+                        <section className="left relative flex flex-col md:w-[30%] w-full border-r md:h-[97.8vh] h-[99.8vh]">
+                            <div className="rounded-none border-b flex flex-row justify-between p-2 items-center">
+                                <div className='flex flex-row gap-2 pl-8 md:pl-0'>
+                                    <div className='flex flex-col'>
+                                        <Sheet>
+                                            <SheetTrigger>
+                                                <span className='text-[20px]'>{project.name}</span>
+                                            </SheetTrigger>
+                                            <SpaceInfo />
+                                        </Sheet>
+                                    </div>
+                                </div>
+                                <div className='flex felx-row'>
+                                    <Button variant="ghost" size='sm' className='rounded-full w-9 h-9'><Search /></Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger>
+                                            <Button variant="ghost" size='sm' className='rounded-full w-9 h-9'><EllipsisVertical /></Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuItem className='cursor-pointer' onClick={() => { setIsModalOpen(true) }} >
+                                                <PlusCircle />
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className='cursor-pointer' >
+                                                <MinusCircle />
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                    <Button variant="ghost" size='sm' className='rounded-full w-9 h-9 md:hidden block' onClick={() => { setShowCode(true) }} ><Code2Icon /></Button>
+                                </div>
                             </div>
-                            {[...previousChats, ...messages].map((msg, index) => (
-                                msg && msg.sender ? (
-                                    <Card key={msg._id || index} className={`rounded-[10px] overflow-hidden ${msg.sender._id === user ? 'ml-auto' : ''} w-fit`}>
-                                        <CardContent className="pr-2 pl-2 pt-0 pb-0 bg-muted/80">
-                                            <div className="flex gap-1 pt-1 pb-1">
-                                                <p className="text-sm w-fit">{msg.message}</p>
-                                                <span className="text-[10px] text-gray-500 flex flex-col justify-end">
-                                                    {format(new Date(msg.timestamp), 'HH:mm a')}
-                                                </span>
+
+
+                            <ScrollArea className="h-full">
+                                <div className="p-4 space-y-1">
+                                    <div className="items-center flex flex-col pb-2">
+                                        <Badge variant="secondary" className="text-center text-[10px] w-fit">
+                                            <MessageSquareLock className="h-3 w-3 mr-2" />Messages are end-to-end encrypted.
+                                        </Badge>
+                                    </div>
+                                    {[...messages].map((msg, index) => (
+                                        msg && msg.sender ? (
+                                            <Card key={msg._id || index} className={`rounded-[10px] overflow-hidden ${msg.sender._id === user ? 'ml-auto' : ''} w-fit`}>
+                                                <CardContent className="pr-2 pl-2 pt-0 pb-0 bg-muted/80">
+                                                    <div className="flex gap-1 pt-1 pb-1">
+                                                        <p className="text-sm w-fit">{msg.message}</p>
+                                                        <span className="text-[10px] text-gray-500 flex flex-col justify-end">
+                                                            {isNaN(new Date(msg.timestamp).getTime()) ? 'Invalid date' : format(new Date(msg.timestamp), 'HH:mm a')}
+                                                        </span>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ) : null
+                                    ))}
+                                </div>
+                            </ScrollArea>
+
+                            {/* Input Field */}
+                            <div className="p-4 border-t">
+                                <div className="flex space-x-2">
+                                    <Input
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        placeholder="Enter message"
+                                        className='rounded-[30px]'
+                                        onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
+                                    />
+                                    <Button onClick={send} variant="secondary" className='h-10 w-10 rounded-full'>
+                                        <ArrowUp />
+                                    </Button>
+                                </div>
+                            </div>
+                        </section>
+
+                    )
+                }
+
+
+                {
+                    showCode &&
+                    (
+                        <section className="w-full md:h-[97.8vh] h-[99.8vh]">
+                            <Tabs defaultValue="code">
+                                <div className='p-[11px] flex flex-row justify-between items-center'>
+                                    <div className='pl-6 md:pl-0'>
+                                        <TabsList>
+                                            <TabsTrigger value="code">Code</TabsTrigger>
+                                            <TabsTrigger value="preview">Preview</TabsTrigger>
+                                        </TabsList>
+                                    </div>
+                                    <Button variant="ghost" size='sm' className='rounded-full w-9 h-9 md:hidden block' onClick={() => { setShowCode(false) }} ><MessageSquareTextIcon /></Button>
+                                </div>
+
+                                <SandpackProvider template="react" theme={"dark"}>
+                                    <SandpackLayout style={{ borderRadius: '0', borderLeft: '0', borderBottom: '0' }} >
+                                        <TabsContent value="code" className='flex w-full'>
+                                            <div className='border-r border-b-none'>
+                                                <SandpackFileExplorer style={{ height: '92vh', width: '15vw', borderRadius: '0', borderBottom: '0' }} />
                                             </div>
-                                        </CardContent>
-                                    </Card>
-                                ) : null
-                            ))}
-                        </div>
-                    </ScrollArea>
 
+                                            <SandpackCodeEditor style={{ height: '92vh', borderRadius: '0', borderBottom: '0' }}
+                                                showTabs
+                                                showLineNumbers={true}
+                                                showInlineErrors
+                                                wrapContent
+                                                closableTabs />
+                                        </TabsContent>
+                                        <TabsContent value="preview" className='flex w-full'>
+                                            <SandpackPreview style={{ height: '92vh', borderRadius: '0' }} showNavigator showRefreshButton={true} showRestartButton />
+                                        </TabsContent>
+                                    </SandpackLayout>
+                                </SandpackProvider>
+                            </Tabs>
+                        </section>
+                    )
 
-                    {/* Input Field */}
-                    <div className="p-4 border-t">
-                        <div className="flex space-x-2">
-                            <Input
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                placeholder="Enter message"
-                                className='rounded-[30px]'
-                                onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
-                            />
-                            <Button onClick={send} variant="secondary" className='h-10 w-10 rounded-full'>
-                                <ArrowUp />
-                            </Button>
+                }
+
+                <section className="w-full md:h-[97.8vh] h-[99.8vh] hidden md:block">
+                    <Tabs defaultValue="code">
+                        <div className='p-[11px] flex flex-row justify-between items-center'>
+                            <div className='pl-6 md:pl-0'>
+                                <TabsList>
+                                    <TabsTrigger value="code">Code</TabsTrigger>
+                                    <TabsTrigger value="preview">Preview</TabsTrigger>
+                                </TabsList>
+                            </div>
+                            <Button variant="ghost" size='sm' className='rounded-full w-9 h-9 md:hidden block' onClick={() => { setShowCode(false) }} ><MessageSquareTextIcon /></Button>
                         </div>
-                    </div>
+
+                        <SandpackProvider template="react" theme={"dark"}>
+                            <SandpackLayout style={{ borderRadius: '0', borderLeft: '0', borderBottom: '0' }} >
+                                <TabsContent value="code" className='flex w-full'>
+                                    <div className='border-r border-b-none'>
+                                        <SandpackFileExplorer style={{ height: '92vh', width: '15vw', borderRadius: '0', borderBottom: '0' }} />
+                                    </div>
+
+                                    <SandpackCodeEditor style={{ height: '92vh', borderRadius: '0', borderBottom: '0' }}
+                                        showTabs
+                                        showLineNumbers={true}
+                                        showInlineErrors
+                                        wrapContent
+                                        closableTabs />
+                                </TabsContent>
+                                <TabsContent value="preview" className='flex w-full'>
+                                    <SandpackPreview style={{ height: '92vh', borderRadius: '0' }} showNavigator showRefreshButton={true} showRestartButton />
+                                </TabsContent>
+                            </SandpackLayout>
+                        </SandpackProvider>
+                    </Tabs>
                 </section>
 
-                {/* Right Section */}
-                <section className="right flex-grow flex flex-col">
-                </section>
 
                 {/* Modal */}
                 {isModalOpen && (

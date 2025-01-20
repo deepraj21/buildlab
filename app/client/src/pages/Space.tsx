@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import DesktopSidebar from '@/components/Sidebar/DesktopSidebar';
-import { AlignLeft } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 import SpaceComponent from '@/components/SpaceComponent/SpaceComponent';
 
 export default function Space() {
@@ -28,9 +28,9 @@ export default function Space() {
         <SpaceComponent />
 
       
-      <div className='fixed top-0 flex justify-between w-full p-2 md:hidden items-center'>
-        <div className="md:hidden pt-4" onClick={handleMenuClick}>
-          <AlignLeft />
+      <div className='fixed top-2 flex justify-between w-fit p-2 md:hidden items-center'>
+        <div className="md:hidden" onClick={handleMenuClick}>
+          <GripVertical className='h-5 w-5' />
         </div>
       </div>
     </div>

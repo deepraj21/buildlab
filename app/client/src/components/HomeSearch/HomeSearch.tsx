@@ -325,7 +325,7 @@ const HomeSearch = () => {
                                                                 <h2 className="text-xl">Response:</h2>
                                                             </div>
                                                             <div className="pt-2">
-                                                                <span>{chat.response.text}</span>
+                                                                <span className="text-sm">{chat.response.text}</span>
                                                             </div>
 
 
@@ -372,17 +372,17 @@ const HomeSearch = () => {
                                                                         {chat.response.files.map((file) => (
                                                                             <div className="pt-2">
                                                                                 <div className="border rounded-lg p-1 w-fit bg-muted/50 cursor-pointer hover:bg-muted/100">
-                                                                                    <div className="flex felx-row justify-between items-center gap-2">
+                                                                                    <div className="flex felx-row justify-between items-center gap-2" onClick={() => {
+                                                                                        handleFileSelect(file);
+                                                                                        setSplitView(true);
+                                                                                    }}>
                                                                                         <div className="flex flex-row items-center gap-1">
-                                                                                            <Code />
-                                                                                            <span className="overflow-x-auto w-[90%]">
+                                                                                            <Code className="h-4 w-4" />
+                                                                                            <span className="overflow-x-auto w-[90%] text-sm">
                                                                                                 {file.name}
                                                                                             </span>
                                                                                         </div>
-                                                                                        <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline hidden md:block" onClick={() => {
-                                                                                            handleFileSelect(file);
-                                                                                            setSplitView(true);
-                                                                                        }}>
+                                                                                        <div className="flex flex-row items-center gap-1 text-blue-500 hover:underline hidden md:block">
                                                                                             <ArrowUpRightSquare className="h-4 w-4" />
                                                                                         </div>
                                                                                         <Drawer>
@@ -471,13 +471,13 @@ const HomeSearch = () => {
                                     )
                                 }
                                 {/* Search Input */}
-                                <div className="p-2 rounded-full bg-muted">
+                                <div className="p-2 rounded-full dark:bg-muted/40 bg-muted">
                                     <div className="relative">
                                         <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-4">
                                             <Search className="w-4 h-4" />
                                         </div>
                                         <Input
-                                            placeholder="Search anything..."
+                                            placeholder="Search with BuildLab..."
                                             className="w-full rounded-full py-6 pl-10 pr-[55px]"
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
