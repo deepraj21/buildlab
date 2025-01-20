@@ -76,7 +76,7 @@ const ReviewCard = ({
 
 export function HomeMarquee({ setSearchQuery }: { setSearchQuery: (query: string) => void }) {
     return (
-        <div className="md:max-w-2xl max-w-[330px] flex w-full flex-col items-center justify-center overflow-hidden mb-6 relative">
+        <div className="md:max-w-3xl max-w-[300px] flex w-full flex-col items-center justify-center overflow-hidden mb-6 relative">
             <Marquee pauseOnHover className="[--duration:20s]">
                 {firstRow.map((review, index) => (
                     <ReviewCard key={`first-${index}`} {...review} onClick={() => setSearchQuery(review.body)} />

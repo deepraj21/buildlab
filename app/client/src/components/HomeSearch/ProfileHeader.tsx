@@ -8,13 +8,13 @@ const ProfileHeader = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState<string | null>(null);
     useEffect(() => {
-        const storedUser = localStorage.getItem("spaceUser");
+        const storedUser = localStorage.getItem("buildlabUser");
         setUser(storedUser);
     }, []);
 
     const logout = (e: React.MouseEvent) => {
         e.preventDefault();
-        localStorage.removeItem("spaceUser");
+        localStorage.removeItem("buildlabUser");
         localStorage.removeItem("token");
         setUser(null);
     };

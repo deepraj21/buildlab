@@ -77,7 +77,7 @@ const SpaceComponent: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     // const [fileTree, setFileTree] = useState<FileTree>({});
-    const user = localStorage.getItem('spaceUser');
+    const user = localStorage.getItem('buildlabUser');
 
     const handleUserClick = (id: string) => {
         setSelectedUserId((prevSelectedUserId) => {
@@ -251,20 +251,20 @@ const SpaceComponent: React.FC = () => {
                         <section className="w-full md:h-[97.8vh] h-[99.8vh]">
                             <Tabs defaultValue="code">
                                 <div className='p-[11px] flex flex-row justify-between items-center'>
-                                    <div className='pl-6 md:pl-0'>
+                                    <div className='pl-6 md:pl-0 -mt-1'>
                                         <TabsList>
                                             <TabsTrigger value="code">Code</TabsTrigger>
                                             <TabsTrigger value="preview">Preview</TabsTrigger>
                                         </TabsList>
                                     </div>
-                                    <Button variant="ghost" size='sm' className='rounded-full w-9 h-9 md:hidden block' onClick={() => { setShowCode(false) }} ><MessageSquareTextIcon /></Button>
+                                    <Button variant="ghost" size='sm' className='rounded-full w-8 h-8 md:hidden block' onClick={() => { setShowCode(false) }} ><MessageSquareTextIcon /></Button>
                                 </div>
 
                                 <SandpackProvider template="react" theme={"dark"}>
                                     <SandpackLayout style={{ borderRadius: '0', borderLeft: '0', borderBottom: '0' }} >
                                         <TabsContent value="code" className='flex w-full'>
                                             <div className='border-r border-b-none'>
-                                                <SandpackFileExplorer style={{ height: '92vh', width: '15vw', borderRadius: '0', borderBottom: '0' }} />
+                                                <SandpackFileExplorer style={{ height: '92vh', width: '40vw', borderRadius: '0', borderBottom: '0' }} />
                                             </div>
 
                                             <SandpackCodeEditor style={{ height: '92vh', borderRadius: '0', borderBottom: '0' }}

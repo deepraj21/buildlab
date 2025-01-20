@@ -25,7 +25,7 @@ const Signin = () => {
             console.log(res.data)
             toast.success("👋🏻 Welcome back buddy!!")
             localStorage.setItem('token', res.data.token)
-            localStorage.setItem('spaceUser', res.data.user.email)
+            localStorage.setItem('buildlabUser', res.data.user.email)
             navigate('/')
         } catch (err: any) {
             toast.error(err.response?.data?.errors || "An error occurred during login")
