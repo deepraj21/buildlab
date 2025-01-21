@@ -12,9 +12,6 @@ import {
     CalendarDays,
     Copy,
     Download,
-    PartyPopper,
-    Zap,
-    ArrowRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -41,8 +38,7 @@ import BlurFade from "@/components/ui/blur-fade";
 import { HomeMarquee } from "./HomeMarquee";
 import axios from "axios";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useNavigate } from "react-router-dom";
-import Marquee from "../ui/marquee";
+import HeaderMarquee from "./HeaderMarquee";
 
 interface SearchResult {
     title: string;
@@ -66,7 +62,7 @@ interface Chats {
 }
 
 const HomeSearch = () => {
-    const navigate = useNavigate();
+   
     const [searchQuery, setSearchQuery] = useState("");
     const [chatHistory, setChatHistory] = useState<Chats[]>([]);
     const [loading, setLoading] = useState(false);
@@ -278,19 +274,10 @@ const HomeSearch = () => {
 
     return (
         <div className="md:p-2 md:ml-[87px] w-full">
-            <div className="border h-full flex flex-col justify-center items-center rounded-md bg-white dark:bg-zinc-900 overflow-hidden">
+            <div className="border h-full flex flex-col justify-center items-center w-full rounded-md bg-white dark:bg-zinc-900 overflow-hidden">
                 {
                     chatHistory.length == 0 && (
-                        <div className="bg-[#20B8CD]/30 w-full z-10 p-2 mt-10 md:mt-0">
-                            <Marquee>
-                                <div className="flex flex-row gap-2 items-center px-4">
-                                    <PartyPopper className="h-4 w-4 flex-shrink-0" /> New Feature: Introducing <Zap className="h-4 w-4 flex-shrink-0" />{" "}
-                                    Build. Now create your <Code2 className="h-4 w-4 flex-shrink-0" /> Projects in{" "}
-                                    <Atom className="h-4 w-4 flex-shrink-0" /> BuildLab within minutes by just giving instructions and query. Also
-                                    Includes Memory and run your project with inbuilt codeEditor. <span className="underline cursor-pointer" onClick={() => { navigate('/build') }}>Visit</span> <ArrowRight />
-                                </div>
-                            </Marquee>
-                        </div>
+                       <HeaderMarquee/>
                     )
                 }
 
