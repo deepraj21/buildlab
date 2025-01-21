@@ -12,7 +12,6 @@ import {
     CalendarDays,
     Copy,
     Download,
-    Loader,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -39,12 +38,6 @@ import BlurFade from "@/components/ui/blur-fade";
 import { HomeMarquee } from "./HomeMarquee";
 import axios from "axios";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@/components/ui/tabs-circle"
 
 interface SearchResult {
     title: string;
@@ -288,7 +281,25 @@ const HomeSearch = () => {
                         {/* Main Content */}
                         <div className="p-3 max-w-3xl w-full flex justify-center items-center min-w-3xl">
                             <div className="space-y-4">
-                                
+                                {/* Header */}
+                                {
+                                    chatHistory.length == 0 && (
+                                        <div className="transition-opacity duration-500">
+                                            <div className="flex items-center justify-center mb-6">
+                                                <Atom className="w-20 h-20 animate-pulse text-[#20B8CD]" strokeWidth={1.3} />
+                                            </div>
+                                            <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
+                                                What can I help with?
+                                            </h1>
+                                            <div className="w-full pl-2">
+                                              <HomeMarquee setSearchQuery={setSearchQuery} />  
+                                            </div>
+                                            
+                                        </div>
+                                    )
+                                }
+
+                                {/* Search Results */}
                                 {
                                     error && (
                                         <div className="flex flex-row gap-2 items-center border w-fit p-1 rounded-xl bg-red-700/20 justify-center mx-auto">
@@ -296,7 +307,6 @@ const HomeSearch = () => {
                                         </div>
                                     )
                                 }
-
                                 {
                                     chatHistory.length > 0 && (
                                         <div className="space-y-4 pt-1 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
@@ -366,9 +376,9 @@ const HomeSearch = () => {
                                                                             <div className="pt-2">
                                                                                 <div className="border rounded-lg p-1 w-fit bg-muted/50 cursor-pointer hover:bg-muted/100">
                                                                                     <div className="flex felx-row justify-between items-center gap-2" onClick={() => {
-                                                                                        handleFileSelect(file);
-                                                                                        setSplitView(true);
-                                                                                    }}>
+                                                                                            handleFileSelect(file);
+                                                                                            setSplitView(true);
+                                                                                        }}>
                                                                                         <div className="flex flex-row items-center gap-1">
                                                                                             <Code className="h-4 w-4" />
                                                                                             <span className="overflow-x-auto w-[90%] text-sm">
@@ -463,130 +473,46 @@ const HomeSearch = () => {
                                         </div>
                                     )
                                 }
-
-                                {
-                                    chatHistory.length == 0 && (
-                                        <>
-                                        <div className="flex items-center justify-center mb-6">
-                                                <Atom className="w-20 h-20 animate-pulse text-[#20B8CD]" strokeWidth={1.3} />
-                                            </div>
-                                            <Tabs defaultValue="search">
-                                                <div className="items-center flex justify-center pb-4">
-                                                   <TabsList>
-                                                    <TabsTrigger value="search" className="gap-1"><Search className="h-4 w-4" />Search</TabsTrigger>
-                                                        <TabsTrigger value="develop" className="gap-1"><Code className="h-4 w-4" />Develop</TabsTrigger>
-                                                </TabsList> 
-                                                </div>
-                                                
-                                                <TabsContent value="search">
-                                                    <BlurFade delay={0.25} inView>
-                                                        <div className="transition-opacity duration-500">
-                                                            <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
-                                                                What can I help with?
-                                                            </h1>
-                                                            <HomeMarquee setSearchQuery={setSearchQuery} />
-                                                        </div>
-                                                        {/* Search Input */}
-                                                        <div className="p-2 rounded-full dark:bg-muted/40 bg-muted">
-                                                            <div className="relative">
-                                                                <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-4">
-                                                                    <Search className="w-4 h-4" />
-                                                                </div>
-                                                                <Input
-                                                                    placeholder="Search with BuildLab..."
-                                                                    className="w-full rounded-full py-6 pl-10 pr-[55px]"
-                                                                    value={searchQuery}
-                                                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                                                    disabled={inputDisabled}
-                                                                    onKeyPress={(e) => {
-                                                                        if (e.key === 'Enter') {
-                                                                            handleSearch();
-                                                                        }
-                                                                    }}
-                                                                />
-                                                                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
-                                                                    <Button
-                                                                        className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
-                                                                        variant="secondary"
-                                                                        size="sm"
-                                                                        onClick={handleSearch}
-                                                                        disabled={loading}
-                                                                    >
-                                                                        {loading ? <Loader className="animate-spin" /> : <ArrowUp />}
-                                                                    </Button>
-                                                                </div>
-                                                                {showScrollButton && (
-                                                                    <Button
-                                                                        className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
-                                                                        onClick={scrollToBottom}
-                                                                        variant='secondary'
-                                                                    >
-                                                                        <ArrowDown className="w-4 h-4" />
-                                                                    </Button>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </BlurFade>
-                                                </TabsContent>
-                                                <TabsContent value="develop">
-                                                    <BlurFade delay={0.25} inView>
-                                                        <div className="transition-opacity duration-500">
-                                                            <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
-                                                                What we are building?
-                                                            </h1>
-                                                            <HomeMarquee setSearchQuery={setSearchQuery} />
-                                                        </div>
-                                                        {/* Search Input */}
-                                                        <div className="p-2 rounded-full dark:bg-muted/40 bg-muted">
-                                                            <div className="relative">
-                                                                <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-4">
-                                                                    <Code className="w-4 h-4" />
-                                                                </div>
-                                                                <Input
-                                                                    placeholder="Develop with BuildLab..."
-                                                                    className="w-full rounded-full py-6 pl-10 pr-[55px]"
-                                                                    value={searchQuery}
-                                                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                                                    disabled={inputDisabled}
-                                                                    onKeyPress={(e) => {
-                                                                        if (e.key === 'Enter') {
-                                                                            handleSearch();
-                                                                        }
-                                                                    }}
-                                                                />
-                                                                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
-                                                                    <Button
-                                                                        className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
-                                                                        variant="secondary"
-                                                                        size="sm"
-                                                                        onClick={handleSearch}
-                                                                        disabled={loading}
-                                                                    >
-                                                                        {loading ? <Loader className="animate-spin" /> : <ArrowUp />}
-                                                                    </Button>
-                                                                </div>
-                                                                {showScrollButton && (
-                                                                    <Button
-                                                                        className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
-                                                                        onClick={scrollToBottom}
-                                                                        variant='secondary'
-                                                                    >
-                                                                        <ArrowDown className="w-4 h-4" />
-                                                                    </Button>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </BlurFade>
-                                                    
-                                                </TabsContent>
-                                            </Tabs>
-                                        </>
-                                        
-                                        
-                                    )
-                                }
-
-                                
+                                {/* Search Input */}
+                                <div className="p-2 rounded-full dark:bg-muted/40 bg-muted">
+                                    <div className="relative">
+                                        <div className="absolute top-1/2 -translate-y-1/2 flex items-center space-x-2 pl-4">
+                                            <Search className="w-4 h-4" />
+                                        </div>
+                                        <Input
+                                            placeholder="Search with BuildLab..."
+                                            className="w-full rounded-full py-6 pl-10 pr-[55px]"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            disabled={inputDisabled}
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    handleSearch();
+                                                }
+                                            }}
+                                        />
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-4">
+                                            <Button
+                                                className="w-8 h-8 rounded-full bg-[#20B8CD]/20 hover:bg-[#20B8CD]/40"
+                                                variant="secondary"
+                                                size="sm"
+                                                onClick={handleSearch}
+                                                disabled={loading}
+                                            >
+                                                {loading ? <Atom className="animate-spin" /> : <ArrowUp />}
+                                            </Button>
+                                        </div>
+                                        {showScrollButton && (
+                                            <Button
+                                                className="absolute bottom-20 right-3 rounded-full h-8 w-8 animate-bounce"
+                                                onClick={scrollToBottom}
+                                                variant='secondary'
+                                            >
+                                                <ArrowDown className="w-4 h-4" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </ResizablePanel>

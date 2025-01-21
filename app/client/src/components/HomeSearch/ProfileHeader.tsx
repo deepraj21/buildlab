@@ -1,8 +1,13 @@
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { Settings, User2, ArrowLeftCircle } from "lucide-react";
+import { Settings, User2, ArrowLeftCircle, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ModeToggle from "../Theme/mode-toggle";
+import {
+    Sheet,
+    SheetContent,
+    SheetTrigger,
+} from "@/components/ui/sheet"
+import AboutBuildLab from "../About/AboutBuildLab";
 
 const ProfileHeader = () => {
     const navigate = useNavigate();
@@ -22,22 +27,31 @@ const ProfileHeader = () => {
         <div>
             {!user ? (
                 <>
-                    <div className="w-full items-center flex flex-col justify-center pb-10 cursor-pointer">
+                    <div className="w-full items-center flex flex-col justify-center cursor-pointer">
                         <ModeToggle/>
                         <span className='text-[12px] p-1 hidden md:block'>theme</span>
                     </div>
-                    <Button
-                        variant="outline"
-                        className="dark:border-zinc-700 rounded-full h-11 bg-muted -rotate-90 mb-8 dark:bg-zinc-900"
-                        onClick={() => { navigate('/auth') }}
-                    >
-                        SignIn <User2 className="w-6 h-6" />
-                    </Button>
+                    <div className="w-full items-center flex flex-col justify-center pt-1 md: pt-3 cursor-pointer" onClick={() => { navigate('/auth') }}>
+                        <User2 className='h-6 w-6' />
+                        <span className='text-[12px] p-1 hidden md:block'>Signin</span>
+                    </div>
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <div className="w-full items-center flex flex-col justify-center md:pt-4 pt-3 cursor-pointer">
+                                <AlertCircle style={{ transform: 'rotate(180deg)' }} className='h-6 w-6' />
+                                <span className='text-[12px] p-1 hidden md:block'>About</span>
+                            </div>
+                        </SheetTrigger>
+                        <SheetContent>
+                            <AboutBuildLab />
+                        </SheetContent>
+                    </Sheet>
+                    
                 </>
 
             ) : (
                 <>
-                    <div className="w-full items-center flex flex-col justify-center pb-2 cursor-pointer">
+                    <div className="w-full items-center flex flex-col justify-center pb-1 cursor-pointer">
                         <ModeToggle/>
                         <span className='text-[12px] p-1 hidden md:block'>theme</span>
                     </div>
@@ -53,6 +67,11 @@ const ProfileHeader = () => {
                         <ArrowLeftCircle className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
                         <span className='text-[12px] p-1 hidden md:block'>Logout</span>
                     </div>
+                    <div className="w-full items-center flex flex-col justify-center pb-2 cursor-pointer">
+                        <AlertCircle style={{ transform: 'rotate(180deg)' }} className='h-5 w-5' />
+                        <span className='text-[12px] p-1 hidden md:block'>theme</span>
+                    </div>
+                        
                 </>
             )}
         </div>

@@ -1,61 +1,72 @@
-import { cn } from "@/lib/utils";
-import Marquee from "@/components/ui/marquee";
-import { Code, Bug, GitGraphIcon as Git, Terminal, Database, Server, Cloud, Lock, Cpu, Wifi } from 'lucide-react';
+import { cn } from "@/lib/utils"
+import Marquee from "@/components/ui/marquee"
+import {
+    ListTodo,
+    Calendar,
+    Calculator,
+    CloudRainWindIcon as Weather,
+    MessageSquare,
+    Music,
+    ShoppingCart,
+    Map,
+    Clock,
+    Camera,
+} from "lucide-react"
 
 const reviews = [
     {
-        icon: Code,
-        body: "What's your favorite programming language?",
+        icon: ListTodo,
+        body: "Build a todo list app",
     },
     {
-        icon: Bug,
-        body: "How do you debug a tricky issue?",
+        icon: Calendar,
+        body: "Create a calendar app",
     },
     {
-        icon: Git,
-        body: "Git rebase or merge?",
+        icon: Calculator,
+        body: "Develop a calculator",
     },
     {
-        icon: Terminal,
-        body: "Vim or Emacs?",
+        icon: Weather,
+        body: "Make a weather forecast app",
     },
     {
-        icon: Database,
-        body: "SQL or NoSQL?",
+        icon: MessageSquare,
+        body: "Build a real-time chat application",
     },
     {
-        icon: Server,
-        body: "Monolith or microservices?",
+        icon: Music,
+        body: "Create a music player",
     },
     {
-        icon: Cloud,
-        body: "AWS, Azure, or GCP?",
+        icon: ShoppingCart,
+        body: "Develop an e-commerce product page",
     },
     {
-        icon: Lock,
-        body: "How do you handle API security?",
+        icon: Map,
+        body: "Build a maps and location app",
     },
     {
-        icon: Cpu,
-        body: "What's your take on serverless?",
+        icon: Clock,
+        body: "Create a pomodoro timer",
     },
     {
-        icon: Wifi,
-        body: "REST or GraphQL?",
+        icon: Camera,
+        body: "Develop a photo gallery app",
     },
-];
+]
 
-const firstRow = reviews.slice(0, reviews.length / 2);
-const secondRow = reviews.slice(reviews.length / 2);
+const firstRow = reviews.slice(0, reviews.length / 2)
+const secondRow = reviews.slice(reviews.length / 2)
 
 const ReviewCard = ({
     icon: Icon,
     body,
     onClick,
 }: {
-    icon: React.ElementType;
-    body: string;
-    onClick: () => void;
+    icon: React.ElementType
+    body: string
+    onClick: () => void
 }) => {
     return (
         <figure
@@ -71,10 +82,10 @@ const ReviewCard = ({
                 <blockquote className="text-[10px]">{body}</blockquote>
             </div>
         </figure>
-    );
-};
+    )
+}
 
-export function HomeMarquee({ setSearchQuery }: { setSearchQuery: (query: string) => void }) {
+export function BuildMarquee({ setSearchQuery }: { setSearchQuery: (query: string) => void }) {
     return (
         <div className="md:max-w-2xl max-w-[300px] flex w-full flex-col items-center justify-center overflow-hidden mb-6 relative">
             <Marquee pauseOnHover className="[--duration:20s]">
@@ -90,6 +101,6 @@ export function HomeMarquee({ setSearchQuery }: { setSearchQuery: (query: string
             <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent dark:from-zinc-900"></div>
             <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-zinc-900"></div>
         </div>
-    );
+    )
 }
 
