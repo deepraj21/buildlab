@@ -12,6 +12,9 @@ import {
     CalendarDays,
     Copy,
     Download,
+    PartyPopper,
+    Zap,
+    ArrowRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,6 +41,8 @@ import BlurFade from "@/components/ui/blur-fade";
 import { HomeMarquee } from "./HomeMarquee";
 import axios from "axios";
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useNavigate } from "react-router-dom";
+import Marquee from "../ui/marquee";
 
 interface SearchResult {
     title: string;
@@ -61,7 +66,7 @@ interface Chats {
 }
 
 const HomeSearch = () => {
-
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
     const [chatHistory, setChatHistory] = useState<Chats[]>([]);
     const [loading, setLoading] = useState(false);
@@ -273,15 +278,31 @@ const HomeSearch = () => {
 
     return (
         <div className="md:p-2 md:ml-[87px] w-full">
-            <div className="border h-full flex flex-row justify-center items-center rounded-md bg-white dark:bg-zinc-900">
+            <div className="border h-full flex flex-col justify-center items-center rounded-md bg-white dark:bg-zinc-900 overflow-hidden">
+                {
+                    chatHistory.length == 0 && (
+                        <div className="bg-[#20B8CD]/30 w-full z-10 p-2 mt-10 md:mt-0">
+                            <Marquee>
+                                <div className="flex flex-row gap-2 items-center px-4">
+                                    <PartyPopper className="h-4 w-4 flex-shrink-0" /> New Feature: Introducing <Zap className="h-4 w-4 flex-shrink-0" />{" "}
+                                    Build. Now create your <Code2 className="h-4 w-4 flex-shrink-0" /> Projects in{" "}
+                                    <Atom className="h-4 w-4 flex-shrink-0" /> BuildLab within minutes by just giving instructions and query. Also
+                                    Includes Memory and run your project with inbuilt codeEditor. <span className="underline cursor-pointer" onClick={() => { navigate('/build') }}>Visit</span> <ArrowRight />
+                                </div>
+                            </Marquee>
+                        </div>
+                    )
+                }
+
                 <ResizablePanelGroup
                     direction="horizontal"
                 >
-                    <ResizablePanel className="w-full flex justify-center items-center" minSize={30} defaultSize={40}>
+                    <ResizablePanel className="w-full flex justify-center items-center flex-col" minSize={30} defaultSize={40}>
                         {/* Main Content */}
+
                         <div className="p-3 max-w-3xl w-full flex justify-center items-center min-w-3xl">
+
                             <div className="space-y-4">
-                                {/* Header */}
                                 {
                                     chatHistory.length == 0 && (
                                         <div className="transition-opacity duration-500">
@@ -292,9 +313,9 @@ const HomeSearch = () => {
                                                 What can I help with?
                                             </h1>
                                             <div className="w-full pl-2">
-                                              <HomeMarquee setSearchQuery={setSearchQuery} />  
+                                                <HomeMarquee setSearchQuery={setSearchQuery} />
                                             </div>
-                                            
+
                                         </div>
                                     )
                                 }
@@ -344,19 +365,19 @@ const HomeSearch = () => {
                                                                                 <div className="pb-2 pr-3">
                                                                                     <div key={index} className="border rounded-md">
                                                                                         <div className="border-b p-1 bg-muted/90">
-                                                                                        <a
-                                                                                            href={result.link}
-                                                                                            target="_blank"
-                                                                                            rel="noopener noreferrer"
-                                                                                            className="text-blue-500 hover:underline"
-                                                                                        >
-                                                                                            <p className="text-[15px]">{result.title}</p>
-                                                                                        </a>
+                                                                                            <a
+                                                                                                href={result.link}
+                                                                                                target="_blank"
+                                                                                                rel="noopener noreferrer"
+                                                                                                className="text-blue-500 hover:underline"
+                                                                                            >
+                                                                                                <p className="text-[15px]">{result.title}</p>
+                                                                                            </a>
                                                                                         </div>
                                                                                         <div className="p-1">
-                                                                                        <p className="text-[12px]">{result.snippet}</p>
+                                                                                            <p className="text-[12px]">{result.snippet}</p>
                                                                                         </div>
-                                                                                        
+
                                                                                     </div>
                                                                                 </div>
 
@@ -376,9 +397,9 @@ const HomeSearch = () => {
                                                                             <div className="pt-2">
                                                                                 <div className="border rounded-lg p-1 w-fit bg-muted/50 cursor-pointer hover:bg-muted/100">
                                                                                     <div className="flex felx-row justify-between items-center gap-2" onClick={() => {
-                                                                                            handleFileSelect(file);
-                                                                                            setSplitView(true);
-                                                                                        }}>
+                                                                                        handleFileSelect(file);
+                                                                                        setSplitView(true);
+                                                                                    }}>
                                                                                         <div className="flex flex-row items-center gap-1">
                                                                                             <Code className="h-4 w-4" />
                                                                                             <span className="overflow-x-auto w-[90%] text-sm">
@@ -448,22 +469,22 @@ const HomeSearch = () => {
                                                                 </div>
                                                             )}
                                                             <div className="flex flex-row justify-between items-end">
-                                                               <div className="pt-4 flex flex-row gap-2">
-                                                                <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyChatToClipboard(chat)}>
-                                                                    <Copy className="h-3 w-3 text-[#20B8CD]" />
-                                                                    <h2 className="text-[12px]">Copy</h2>
+                                                                <div className="pt-4 flex flex-row gap-2">
+                                                                    <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => copyChatToClipboard(chat)}>
+                                                                        <Copy className="h-3 w-3 text-[#20B8CD]" />
+                                                                        <h2 className="text-[12px]">Copy</h2>
+                                                                    </div>
+                                                                    <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => downloadChatAsJson(chat)}>
+                                                                        <Download className="h-3 w-3 text-[#20B8CD]" />
+                                                                        <h2 className="text-[12px]">Download</h2>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="flex flex-row items-center gap-1 border bg-muted w-fit pl-1 pr-1 rounded-md cursor-pointer hover:bg-muted/50" onClick={() => downloadChatAsJson(chat)}>
-                                                                    <Download className="h-3 w-3 text-[#20B8CD]" />
-                                                                    <h2 className="text-[12px]">Download</h2>
-                                                                </div>
-                                                               </div> 
                                                                 <div className="flex gap-1 items-center border bg-muted w-fit pl-1 pr-1 rounded-md">
                                                                     <Timer className="h-3 w-3 text-[#20B8CD]" />
                                                                     <h2 className="text-[12px]">Res Time: {chat.responseTime}ms</h2>
                                                                 </div>
                                                             </div>
-                                                            
+
                                                         </div>
                                                         <hr className="border-t mt-4" />
                                                     </BlurFade>

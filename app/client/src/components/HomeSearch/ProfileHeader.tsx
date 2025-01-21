@@ -31,7 +31,7 @@ const ProfileHeader = () => {
                         <ModeToggle/>
                         <span className='text-[12px] p-1 hidden md:block'>theme</span>
                     </div>
-                    <div className="w-full items-center flex flex-col justify-center pt-1 md: pt-3 cursor-pointer" onClick={() => { navigate('/auth') }}>
+                    <div className="w-full items-center flex flex-col justify-center pt-1 md:pt-3 cursor-pointer" onClick={() => { navigate('/auth') }}>
                         <User2 className='h-6 w-6' />
                         <span className='text-[12px] p-1 hidden md:block'>Signin</span>
                     </div>
