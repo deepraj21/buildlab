@@ -24,8 +24,9 @@ const Auth = () => {
               </LineShadowText>
               <ol className="space-y-2 list-decimal list-inside">
                 <li>Structured LLM response with code panel</li>
-                <li>Create your team and use inbuilt @ai</li>
-                <li>Find People through RAG</li>
+                <li>Create your team and use @ai</li>
+                <li>Build React Projects with ai</li>
+                <li>Projects supports codeEditor</li>
                 <li>Feeds on Explore Section</li>
               </ol>
             </div>

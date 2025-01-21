@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Settings, User2, ArrowLeftCircle, AlertCircle } from "lucide-react";
+import { User2, ArrowLeftCircle, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ModeToggle from "../Theme/mode-toggle";
 import {
@@ -28,7 +28,7 @@ const ProfileHeader = () => {
             {!user ? (
                 <>
                     <div className="w-full items-center flex flex-col justify-center cursor-pointer">
-                        <ModeToggle/>
+                        <ModeToggle />
                         <span className='text-[12px] p-1 hidden md:block'>theme</span>
                     </div>
                     <div className="w-full items-center flex flex-col justify-center pt-1 md:pt-3 cursor-pointer" onClick={() => { navigate('/auth') }}>
@@ -46,19 +46,17 @@ const ProfileHeader = () => {
                             <AboutBuildLab />
                         </SheetContent>
                     </Sheet>
-                    
                 </>
-
             ) : (
                 <>
                     <div className="w-full items-center flex flex-col justify-center pb-1 cursor-pointer">
-                        <ModeToggle/>
+                        <ModeToggle />
                         <span className='text-[12px] p-1 hidden md:block'>theme</span>
                     </div>
-                    <div className="w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer">
+                    {/* <div className="w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer">
                         <Settings className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
                         <span className='text-[12px] p-1 hidden md:block'>settings</span>
-                    </div>
+                    </div> */}
                     <div className="w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer">
                         <User2 className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
                         <span className='text-[12px] p-1 hidden md:block w-[60px] overflow-x-scroll'>{user}</span>
@@ -67,11 +65,17 @@ const ProfileHeader = () => {
                         <ArrowLeftCircle className="w-6 h-6 hover:scale-110 transition ease-in-out duration-300" />
                         <span className='text-[12px] p-1 hidden md:block'>Logout</span>
                     </div>
-                    <div className="w-full items-center flex flex-col justify-center pb-2 cursor-pointer">
-                        <AlertCircle style={{ transform: 'rotate(180deg)' }} className='h-5 w-5' />
-                        <span className='text-[12px] p-1 hidden md:block'>theme</span>
-                    </div>
-                        
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <div className="w-full items-center flex flex-col justify-center md:pt-2 pt-3 cursor-pointer">
+                                <AlertCircle style={{ transform: 'rotate(180deg)' }} className='h-6 w-6' />
+                                <span className='text-[12px] p-1 hidden md:block'>About</span>
+                            </div>
+                        </SheetTrigger>
+                        <SheetContent>
+                            <AboutBuildLab />
+                        </SheetContent>
+                    </Sheet>
                 </>
             )}
         </div>
