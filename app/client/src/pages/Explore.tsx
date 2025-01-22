@@ -31,7 +31,7 @@ export default function Explore() {
         <div className="fixed inset-0 bg-black/80 z-40" onClick={handleMenuClick}></div>
       )}
       <ExploreComponent />
-      <div className='fixed top-0 flex justify-between w-full p-4 backdrop-blur-sm md:hidden items-center border-b'>
+      <div className='fixed top-0 flex justify-between w-full p-3 backdrop-blur-sm md:hidden items-center border-b'>
         <div className='flex items-center gap-2'>
           <div className="md:hidden" onClick={handleMenuClick}>
             <GripVertical className='h-5 w-5' />

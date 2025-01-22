@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { configDotenv } from 'dotenv';
+import blogRoutes from './routes/blog.routes.js';
 
 configDotenv();
 
@@ -39,6 +40,7 @@ app.use(cookieParser());
 app.use('/users', userRoutes);
 app.use('/projects', projectRoutes);
 app.use("/ai", aiRoutes)
+app.use('/blogs', blogRoutes);
 
 app.get('/', (req, res) => {
     res.send('Welcome to space server !');

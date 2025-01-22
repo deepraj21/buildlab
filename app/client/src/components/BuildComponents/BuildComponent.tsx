@@ -175,13 +175,13 @@ const BuildComponent = () => {
                         {/* Main Content */}
                         {
                             showCodebase ? (
-                                <div className="absolute top-4 z-10 right-11 block md:hidden">
+                                <div className="absolute top-3 z-10 right-11 block md:hidden">
                                     <Button variant="outline" className="h-8 text-sm rounded-full" size='sm' onClick={() => setShowCodebase(false)}>
                                         Show Chat
                                     </Button>
                                 </div>
                             ) : (
-                                <div className="absolute top-4 z-10 right-11 block md:hidden">
+                                <div className="absolute top-3 z-10 right-11 block md:hidden">
                                     <Button variant="outline" className="h-8 text-sm rounded-full" size='sm' onClick={() => setShowCodebase(true)}>
                                         Show CodeBase
                                     </Button>

@@ -28,7 +28,7 @@ export default function Space() {
         <SpaceComponent />
 
       
-      <div className='fixed top-2 flex justify-between w-fit p-2 md:hidden items-center'>
+      <div className='fixed top-2 flex justify-between w-fit p-3 md:hidden items-center'>
         <div className="md:hidden" onClick={handleMenuClick}>
           <GripVertical className='h-5 w-5' />
         </div>
