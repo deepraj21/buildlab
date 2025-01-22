@@ -33,7 +33,7 @@ export default function Build() {
             )}
             <BuildComponent />
 
-            <div className='fixed top-0 flex justify-between w-full p-2 backdrop-blur-sm md:hidden items-center'>
+            <div className='fixed top-0 flex justify-between w-full p-4 backdrop-blur-sm md:hidden items-center border-b'>
                 <div className='flex items-center gap-2'>
                     <div className="md:hidden" onClick={handleMenuClick}>
                         <GripVertical className='h-5 w-5' />

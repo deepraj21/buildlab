@@ -274,7 +274,7 @@ const HomeSearch = () => {
 
     return (
         <div className="md:p-2 md:ml-[87px] w-full">
-            <div className="border h-full flex flex-col justify-center items-center w-full rounded-md bg-white dark:bg-zinc-900 overflow-hidden">
+            <div className="border h-full flex flex-col justify-center items-center w-full rounded-md bg-white dark:bg-zinc-900 overflow-hidden pt-4 md:pt-0">
                 {
                     chatHistory.length == 0 && (
                        <HeaderMarquee/>

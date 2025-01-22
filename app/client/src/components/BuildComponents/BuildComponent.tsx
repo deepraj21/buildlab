@@ -166,8 +166,8 @@ const BuildComponent = () => {
     }, []);
 
     return (
-        <div className="md:p-2 md:ml-[87px] w-full">
-            <div className="border h-full flex flex-row justify-center items-center rounded-md bg-white dark:bg-zinc-900">
+        <div className="md:p-2 md:ml-[87px] w-full ">
+            <div className="border h-full flex flex-row justify-center items-center rounded-md bg-white dark:bg-zinc-900 pt-4 md:pt-0">
                 <ResizablePanelGroup
                     direction="horizontal"
                 >
@@ -175,13 +175,13 @@ const BuildComponent = () => {
                         {/* Main Content */}
                         {
                             showCodebase ? (
-                                <div className="absolute top-2 z-10 right-10 block md:hidden">
+                                <div className="absolute top-4 z-10 right-11 block md:hidden">
                                     <Button variant="outline" className="h-8 text-sm rounded-full" size='sm' onClick={() => setShowCodebase(false)}>
                                         Show Chat
                                     </Button>
                                 </div>
                             ) : (
-                                <div className="absolute top-2 z-10 right-10 block md:hidden">
+                                <div className="absolute top-4 z-10 right-11 block md:hidden">
                                     <Button variant="outline" className="h-8 text-sm rounded-full" size='sm' onClick={() => setShowCodebase(true)}>
                                         Show CodeBase
                                     </Button>
@@ -202,7 +202,7 @@ const BuildComponent = () => {
                                             <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
                                                 What we are building?
                                             </h1>
-                                            <div className="w-full">
+                                            <div className="w-full ml-4 md:ml-0">
                                                 <BuildMarquee setSearchQuery={setSearchQuery} />
                                             </div>
 

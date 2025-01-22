@@ -11,7 +11,7 @@ import {
 const HeaderMarquee = () => {
 const navigate = useNavigate();
   return (
-      <div className="bg-[#20B8CD]/30 md:w-[calc(100vw-106px)] w-full z-10 p-1 mt-10 md:mt-0 relative">
+      <div className="bg-[#20B8CD]/30 md:w-[calc(100vw-106px)] w-full z-10 p-1 mt-[45px] md:mt-0 relative">
           <Marquee>
               <div className="flex flex-row gap-2 items-center px-4">
                   <PartyPopper className="h-4 w-4 flex-shrink-0" /> New Feature: Introducing <Zap className="h-4 w-4 flex-shrink-0" />{" "}
