@@ -51,7 +51,7 @@ const AboutBuildLab = () => {
         </LineShadowText>
         <div className="pt-2 flex flex-col">
           <div className="flex flex-row gap-1">
-            <a href="https://github.com/deepraj21" className="text-blue-500 hover:text-blue-700 hover:underline">
+            <a href="https://github.com/deepraj21/buildlab/releases/tag/v0.0.2" className="text-blue-500 hover:text-blue-700 hover:underline">
             v0.0.2
           </a>
           <span className="bg-[#20B8CD]/30 rounded-full pl-2 pr-2 text-sm border w-fit">latest</span>

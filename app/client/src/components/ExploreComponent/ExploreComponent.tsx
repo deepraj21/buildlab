@@ -102,7 +102,7 @@ const ExploreComponent = () => {
             </Card>
             {isMobile && index < filteredArticles.length - 1 && (
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black-900 to-transparent z-20 flex items-center justify-center">
-                    <div className="w-20 h-2 darK:bg-white bg-zinc-800 rounded-full opacity-50 animate-bounce" />
+                    <div className="w-20 h-2 dark:bg-white bg-zinc-800 rounded-full opacity-50 animate-bounce" />
                 </div>
             )}
         </motion.div>

@@ -42,7 +42,6 @@ const BuildComponent = () => {
     const [chatHistory, setChatHistory] = useState<Chats[]>([]);
     const [codeHistory, setCodeHistory] = useState<Code[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [inputDisabled, setInputDisabled] = useState(false);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -79,7 +78,6 @@ const BuildComponent = () => {
 
         setLoading(true);
         setInputDisabled(true);
-        setError(null);
 
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
         const genAI = new GoogleGenerativeAI(apiKey);
@@ -202,19 +200,10 @@ const BuildComponent = () => {
                                             <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
                                                 What we are building?
                                             </h1>
-                                            <div className="w-full ml-4 md:ml-0">
+                                            <div className="w-full ml-6 md:ml-0">
                                                 <BuildMarquee setSearchQuery={setSearchQuery} />
                                             </div>
 
-                                        </div>
-                                    )
-                                }
-
-                                {/* Search Results */}
-                                {
-                                    error && (
-                                        <div className="flex flex-row gap-2 items-center border w-fit p-1 rounded-xl bg-red-700/20 justify-center mx-auto">
-                                            <div className="text-[12px] text-red-700">{error}</div>
                                         </div>
                                     )
                                 }

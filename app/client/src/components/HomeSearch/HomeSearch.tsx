@@ -66,7 +66,6 @@ const HomeSearch = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [chatHistory, setChatHistory] = useState<Chats[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [inputDisabled, setInputDisabled] = useState(false);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -168,7 +167,6 @@ const HomeSearch = () => {
 
         setLoading(true);
         setInputDisabled(true);
-        setError(null);
 
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
         const genAI = new GoogleGenerativeAI(apiKey);
@@ -237,7 +235,7 @@ const HomeSearch = () => {
             setSearchQuery("");
         } catch (err) {
             console.error("Search error:", err);
-            setError("Failed to fetch search results. Please try again.");
+            toast.error("Failed to fetch search results. Please try again.")
         } finally {
             setLoading(false);
             setInputDisabled(false);
@@ -299,7 +297,7 @@ const HomeSearch = () => {
                                             <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
                                                 What can I help with?
                                             </h1>
-                                            <div className="w-full ml-4 md:ml-0">
+                                            <div className="w-full ml-6 md:ml-0">
                                                 <HomeMarquee setSearchQuery={setSearchQuery} />
                                             </div>
                                         </div>
@@ -307,13 +305,6 @@ const HomeSearch = () => {
                                 }
 
                                 {/* Search Results */}
-                                {
-                                    error && (
-                                        <div className="flex flex-row gap-2 items-center border w-fit p-1 rounded-xl bg-red-700/20 justify-center mx-auto">
-                                            <div className="text-[12px] text-red-700">{error}</div>
-                                        </div>
-                                    )
-                                }
                                 {
                                     chatHistory.length > 0 && (
                                         <div className="space-y-4 pt-1 h-[80vh] overflow-y-auto max-w-3xl" ref={chatContainerRef}>
