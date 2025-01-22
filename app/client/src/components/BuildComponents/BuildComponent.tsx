@@ -130,7 +130,7 @@ const BuildComponent = () => {
             setSearchQuery("");
         } catch (err) {
             console.error("Search error:", err);
-            setError("Failed to fetch search results. Please try again.");
+            toast.error("Failed to fetch search results. Please try again.");
         } finally {
             setLoading(false);
             setInputDisabled(false);
@@ -202,7 +202,7 @@ const BuildComponent = () => {
                                             <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
                                                 What we are building?
                                             </h1>
-                                            <div className="w-full pl-2">
+                                            <div className="w-full">
                                                 <BuildMarquee setSearchQuery={setSearchQuery} />
                                             </div>
 

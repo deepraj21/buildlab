@@ -71,7 +71,7 @@ const ReviewCard = ({
     return (
         <figure
             className={cn(
-                "relative w-fit cursor-pointer overflow-hidden rounded-xl border pt-1 pb-1 pl-2 pr-2 ",
+                "relative w-fit cursor-pointer overflow-hidden rounded-xl border pt-1 pb-1 pr-2 pl-2",
                 "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
                 "dark:border-gray-50/[.1] dark:bg-muted dark:hover:bg-[#20B8CD]/30",
             )}
@@ -87,7 +87,7 @@ const ReviewCard = ({
 
 export function BuildMarquee({ setSearchQuery }: { setSearchQuery: (query: string) => void }) {
     return (
-        <div className="md:max-w-2xl max-w-[300px] flex w-full flex-col items-center justify-center overflow-hidden mb-6 relative">
+        <div className="md:max-w-2xl max-w-[330px] flex w-full flex-col items-center justify-center overflow-hidden mb-6 relative">
             <Marquee pauseOnHover className="[--duration:20s]">
                 {firstRow.map((review, index) => (
                     <ReviewCard key={`first-${index}`} {...review} onClick={() => setSearchQuery(review.body)} />

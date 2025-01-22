@@ -1,6 +1,6 @@
 # BuildLab
-
-BuildLab is an innovative platform designed to revolutionize how developers build, explore, and collaborate on projects. Just you need to query and instruuct AI to build your projects and in minutes your project is ready which is editable and runs in inbuilt browser and terminal.
+### A project that builds projects
+BuildLab is an innovative platform designed to revolutionize how developers build, explore, and collaborate on projects. You just need to query and instruct AI to build your projects, and in minutes your project is ready, which is editable and runs in the inbuilt browser and terminal.
 
 ## Features
 
@@ -41,6 +41,6 @@ BuildLab is an innovative platform designed to revolutionize how developers buil
 
 For questions or support, contact me at:
 - Email: deepraj21.bera@gmail.com
-- Raise Issue if you see any problem.
+- Raise an issue if you see any problem.
 
 

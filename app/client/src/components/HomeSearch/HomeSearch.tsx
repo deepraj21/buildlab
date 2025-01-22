@@ -299,7 +299,7 @@ const HomeSearch = () => {
                                             <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
                                                 What can I help with?
                                             </h1>
-                                            <div className="w-full pl-2">
+                                            <div className="w-full">
                                                 <HomeMarquee setSearchQuery={setSearchQuery} />
                                             </div>
 
