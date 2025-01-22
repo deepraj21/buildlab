@@ -1,23 +1,19 @@
 import { useEffect, useState } from 'react';
 import DesktopSidebar from '@/components/Sidebar/DesktopSidebar';
 import HomeSearch from '@/components/HomeSearch/HomeSearch';
-import {AlertCircle, Globe, GripVertical } from 'lucide-react';
+import {AlertCircle, GripVertical } from 'lucide-react';
 import {
     Sheet,
     SheetContent,
     SheetTrigger,
 } from "@/components/ui/sheet"
 import AboutBuildLab from '@/components/About/AboutBuildLab';
-import { toast } from 'sonner';
 
 export default function Home() {
     const theme = localStorage.getItem('vite-ui-theme');
     const [showSidebar, setShowSidebar] = useState(false);
 
     useEffect(() => { 
-        if (navigator.onLine) {
-            toast.error(<><Globe className='h-4 w-4' /> Not connected to Internet. Please try again!</>)
-        }
     }, [theme]);
 
     const handleMenuClick = () => {

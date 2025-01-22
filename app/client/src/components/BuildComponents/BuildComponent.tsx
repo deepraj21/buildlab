@@ -200,10 +200,9 @@ const BuildComponent = () => {
                                             <h1 className="md:text-4xl text-2xl font-normal text-center mb-6">
                                                 What we are building?
                                             </h1>
-                                            <div className="w-full ml-6 md:ml-0">
+                                            <div className="w-full ml-5 md:ml-0">
                                                 <BuildMarquee setSearchQuery={setSearchQuery} />
                                             </div>
-
                                         </div>
                                     )
                                 }

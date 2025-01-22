@@ -4,6 +4,7 @@ import { useSwipeable } from "react-swipeable"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import Marquee from "../ui/marquee"
+import { SkeletonCard } from "./SkeletonCard"
 
 const ExploreComponent = () => {
     const [selectedCategory, setSelectedCategory] = useState("for-you")
@@ -11,6 +12,7 @@ const ExploreComponent = () => {
     const [isMobile, setIsMobile] = useState(false)
     const [direction, setDirection] = useState(0)
     const [articles, setArticles] = useState<Article[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         const checkIsMobile = () => {
@@ -23,8 +25,10 @@ const ExploreComponent = () => {
 
     useEffect(() => {
         const loadArticles = async () => {
+            setIsLoading(true)
             const fetchedArticles = await fetchArticles()
             setArticles(fetchedArticles)
+            setIsLoading(false)
         }
         loadArticles()
     }, [])
@@ -108,6 +112,15 @@ const ExploreComponent = () => {
         </motion.div>
     )
 
+    const renderSkeletons = () => {
+        const skeletonCount = isMobile ? 1 : 6
+        return Array(skeletonCount).fill(null).map((_, index) => (
+            <div key={`skeleton-${index}`} className={`w-full ${isMobile ? "h-[calc(100vh-200px)]" : ""} relative`}>
+                <SkeletonCard />
+            </div>
+        ))
+    }
+
     return (
         <div className="md:p-2 md:ml-[87px] w-full">
             <div className="border h-full flex flex-col justify-center items-center rounded-md bg-white dark:bg-zinc-900">
@@ -139,7 +152,7 @@ const ExploreComponent = () => {
                             </div>
                         </nav>
                     </Marquee>
-                    
+
                     {/* Main Content */}
                     <main
                         className={`overflow-hidden mx-auto px-4 py-8 ${isMobile ? "h-[calc(100vh-200px)]" : "h-[85vh] overflow-y-auto"
@@ -147,13 +160,17 @@ const ExploreComponent = () => {
                         {...handlers}
                     >
                         <div className={`${isMobile ? "" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max"}`}>
-                            <AnimatePresence initial={false} custom={direction}>
-                                {filteredArticles.map((article, index) =>
-                                    isMobile
-                                        ? index === currentCardIndex && renderArticle(article, index)
-                                        : renderArticle(article, index),
-                                )}
-                            </AnimatePresence>
+                            {isLoading ? (
+                                renderSkeletons()
+                            ) : (
+                                <AnimatePresence initial={false} custom={direction}>
+                                    {filteredArticles.map((article, index) =>
+                                        isMobile
+                                            ? index === currentCardIndex && renderArticle(article, index)
+                                            : renderArticle(article, index),
+                                    )}
+                                </AnimatePresence>
+                            )}
                         </div>
                     </main>
                 </div>
@@ -163,4 +180,3 @@ const ExploreComponent = () => {
 }
 
 export default ExploreComponent
-

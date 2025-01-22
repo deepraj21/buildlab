@@ -1,17 +1,13 @@
 import { Authentication } from '@/components/Auth/Authentication'
 import { AuroraText } from "@/components/ui/aurora-text";
 import { LineShadowText } from "@/components/ui/line-shadow-text";
-import { Atom, Globe } from 'lucide-react';
+import { Atom } from 'lucide-react';
 import { Meteors } from "@/components/ui/meteors";
 import { useEffect } from 'react';
-import { toast } from 'sonner';
 
 const Auth = () => {
   const theme = localStorage.getItem('vite-ui-theme');
   useEffect(() => {
-    if (navigator.onLine) {
-      toast.error(<><Globe className='h-4 w-4' /> Not connected to Internet. Please try again!</>)
-    }
   }, [theme]);
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-white dark:bg-zinc-900 w-full overflow-hidden">

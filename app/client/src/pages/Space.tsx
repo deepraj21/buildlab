@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react';
 import DesktopSidebar from '@/components/Sidebar/DesktopSidebar';
-import { Globe, GripVertical } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 import SpaceComponent from '@/components/SpaceComponent/SpaceComponent';
-import { toast } from 'sonner';
 
 export default function Space() {
   const theme = localStorage.getItem('vite-ui-theme');
   const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
-    if (navigator.onLine) {
-      toast.error(<><Globe className='h-4 w-4' /> Not connected to Internet. Please try again!</>)
-    }
   }, [theme]);
 
   const handleMenuClick = () => {
