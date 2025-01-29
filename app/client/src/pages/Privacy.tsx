@@ -86,7 +86,7 @@ const Privacy = () => {
 
                           <section className="mb-8">
                               <h2 className="text-2xl  mb-4">Contact Us</h2>
-                              <p>If you have any questions about this Privacy Policy, please contact us <a href="mailto:deepraj21.bera@gmail.com" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">here</a>.</p>
+                              <p>If you have any questions about this Privacy Policy, please contact us <a href="https://x.com/buildlab_ai" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">here</a>.</p>
                           </section>
                       </div>
 

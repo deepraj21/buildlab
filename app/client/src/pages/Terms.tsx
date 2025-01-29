@@ -89,7 +89,7 @@ const Terms = () => {
                           <h2 className="text-2xl mb-4">Contact Us</h2>
                           <p>If you have any questions or concerns about these Terms and Conditions, please contact us at:</p>
                           <p className="mt-2">BuildLab</p>
-                          <p className='mt-1'>Email: <a href="mailto:deepraj21.bera@gmail.com" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">deepraj21.bera@gmail.com</a></p>
+                          <p className='mt-1'>X: <a href="https://x.com/buildlab_ai" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">x.com/buildlab_ai</a></p>
                       </section>
                   </div>
               </div>

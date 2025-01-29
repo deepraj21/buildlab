@@ -30,6 +30,7 @@ import {
     SandpackFileExplorer,
 } from "@codesandbox/sandpack-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs-circle"
+import Lookup from '../BuildComponents/Lookup';
 
 const md: MarkdownIt = new MarkdownIt({
     html: true,
@@ -51,6 +52,17 @@ interface Message {
     message: string;
     timestamp: string;
 }
+
+// interface AiResults {
+//     projectTitle: string;
+//     explanation: string;
+//     files: {
+//         [key: string]: {
+//             code: string;
+//         };
+//     };
+//     generatedFiles: string[];
+// }
 
 interface FileTree {
     [key: string]: {
@@ -76,7 +88,7 @@ const SpaceComponent: React.FC = () => {
     const [message, setMessage] = useState('');
     const [users, setUsers] = useState<User[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
-    // const [fileTree, setFileTree] = useState<FileTree>({});
+    const [files, setFiles] = useState(Lookup?.DEFAULT_FILE)
     const user = localStorage.getItem('buildlabUser');
 
     const handleUserClick = (id: string) => {
@@ -124,6 +136,46 @@ const SpaceComponent: React.FC = () => {
         setMessage('');
 
     };
+
+    // useEffect(() => {
+    //     const processMessages = messages.map((msg) => {
+    //         if (msg.sender?._id === 'ai') {
+    //             const messageObject = JSON.parse(msg.message || '{}');
+    //             const mergedFiles = { ...Lookup.DEFAULT_FILE, ...messageObject?.files };
+    //             setFiles(mergedFiles);
+    //             return {
+    //                 ...msg,
+    //                 explanation: messageObject.explanation,
+    //             };
+    //         }
+    //         return msg;
+    //     });
+    //     setMessages(processMessages);
+    // }, [messages]);
+    
+    // function processMessages(response: AiResults[]) {
+    //     const mergedFiles = { ...Lookup.DEFAULT_FILE };
+    //     response.forEach(result => {
+    //         Object.assign(mergedFiles, result.files);
+    //     });
+    //     setFiles(mergedFiles);
+    // }
+
+    function WriteAiMessage(message: string) {
+
+        const messageObject = JSON.parse(message)
+        
+        // processMessages(messageObject);
+
+        const mergedFiles = { ...Lookup.DEFAULT_FILE, ...messageObject?.files}
+        
+        setFiles(mergedFiles);
+        
+
+        return (
+            messageObject.explanation
+        )
+    }
 
     useEffect(() => {
         if (!location.state || !location.state.project) return;
@@ -199,7 +251,6 @@ const SpaceComponent: React.FC = () => {
                                 </div>
                             </div>
 
-
                             <ScrollArea className="h-full">
                                 <div className="p-4 space-y-1">
                                     <div className="items-center flex flex-col pb-2">
@@ -207,20 +258,29 @@ const SpaceComponent: React.FC = () => {
                                             <MessageSquareLock className="h-3 w-3 mr-2" />Messages are end-to-end encrypted.
                                         </Badge>
                                     </div>
-                                    {[...messages].map((msg, index) => (
+                                    {messages.map((msg, index) => (
                                         msg && msg.sender ? (
                                             <Card key={msg._id || index} className={`rounded-[10px] overflow-hidden ${msg.sender._id === user ? 'ml-auto' : ''} w-fit`}>
                                                 <CardContent className="pr-2 pl-2 pt-0 pb-0 bg-muted/80">
                                                     <div className="flex gap-1 pt-1 pb-1">
-                                                        <p className="text-sm w-fit">{msg.message}</p>
-                                                        <span className="text-[10px] text-gray-500 flex flex-col justify-end">
-                                                            {isNaN(new Date(msg.timestamp).getTime()) ? 'Invalid date' : format(new Date(msg.timestamp), 'HH:mm a')}
-                                                        </span>
+                                                        {msg.sender._id !== 'ai' ? (
+                                                            <>
+                                                                <p className="text-sm w-fit">{msg.message}</p>
+                                                                <span className="text-[10px] text-gray-500 flex flex-col justify-end">
+                                                                    {isNaN(new Date(msg.timestamp).getTime()) ? 'Invalid date' : format(new Date(msg.timestamp), 'HH:mm a')}
+                                                                </span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <p className="text-sm w-fit">{WriteAiMessage(msg.message)}</p>
+                                                            </>
+                                                        )}
                                                     </div>
                                                 </CardContent>
                                             </Card>
                                         ) : null
                                     ))}
+
                                 </div>
                             </ScrollArea>
 
@@ -260,7 +320,22 @@ const SpaceComponent: React.FC = () => {
                                     <Button variant="ghost" size='sm' className='rounded-full w-8 h-8 md:hidden block' onClick={() => { setShowCode(false) }} ><MessageSquareTextIcon /></Button>
                                 </div>
 
-                                <SandpackProvider template="react" theme={"dark"}>
+                                <SandpackProvider template="react" theme={"dark"}
+                                    files={files}
+                                    customSetup={
+                                        {
+                                            dependencies: {
+                                                ...Lookup.DEPENDANCY
+                                            }
+                                        }
+                                    }
+                                    options={
+                                        {
+                                            externalResources: ['https://cdn.tailwindcss.com']
+                                        }
+                                    }
+                                    key={JSON.stringify(files)}
+                                >
                                     <SandpackLayout style={{ borderRadius: '0', borderLeft: '0', borderBottom: '0' }} >
                                         <TabsContent value="code" className='flex w-full'>
                                             <div className='border-r border-b-none'>
