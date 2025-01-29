@@ -1,4 +1,4 @@
-import { Atom, Search, Globe, Inbox, Zap } from 'lucide-react'
+import { Atom, Search, Inbox, Zap } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import SpaceNameDisplay from '../SpaceNameDisplay/SpaceNameDisplay'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -68,10 +68,10 @@ const DesktopSidebar = () => {
                         <Zap className={`w-6 h-6 hover:scale-110 transition ease-in-out duration-300 ${location.pathname === '/build' ? 'text-[#20B8CD]' : ''}`} />
                         <span className='text-[12px] p-1 hidden md:block'>build</span>
                     </div>
-                    <div className={`w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer ${location.pathname === '/explore' ? 'border-r-2 dark:border-white border-zinc-900 dark:bg-zinc-900 bg-white' : ''}`} onClick={() => navigate('/explore')}>
+                    {/* <div className={`w-full items-center flex flex-col justify-center pt-2 pb-2 cursor-pointer ${location.pathname === '/explore' ? 'border-r-2 dark:border-white border-zinc-900 dark:bg-zinc-900 bg-white' : ''}`} onClick={() => navigate('/explore')}>
                         <Globe className={`w-6 h-6 hover:scale-110 transition ease-in-out duration-300 ${location.pathname === '/explore' ? 'text-[#20B8CD]' : ''}`} />
                         <span className='text-[12px] p-1 hidden md:block'>explore</span>
-                    </div>
+                    </div> */}
                     {
                         isLoggedIn ? 
                         (

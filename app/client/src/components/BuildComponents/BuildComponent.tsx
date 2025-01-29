@@ -1,13 +1,13 @@
-import { Atom,ArrowUp, ArrowDown,Code, Timer,CalendarDays,Copy,Download,} from "lucide-react";
+import { Atom, ArrowUp, ArrowDown, Code, Timer, CalendarDays, Copy, Download, Check, } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, useRef } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ResizableHandle,ResizablePanel,ResizablePanelGroup,} from "@/components/ui/resizable"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup, } from "@/components/ui/resizable"
 import { toast } from "sonner";
 import BlurFade from "@/components/ui/blur-fade";
 import { BuildMarquee } from "./BuildMarquee";
-import {SandpackProvider,SandpackLayout,SandpackCodeEditor,SandpackPreview,SandpackFileExplorer} from "@codesandbox/sandpack-react";
+import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, SandpackFileExplorer } from "@codesandbox/sandpack-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs-circle"
 import Lookup from "./Lookup";
 import Prompt from "./Prompt";
@@ -46,7 +46,7 @@ const BuildComponent = () => {
     const [showScrollButton, setShowScrollButton] = useState(false);
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const [files, setFiles] = useState(Lookup?.DEFAULT_FILE)
-    const [ showCodebase,setShowCodebase ] = useState(false);
+    const [showCodebase, setShowCodebase] = useState(false);
 
     useEffect(() => {
     }, [files, theme]);
@@ -84,7 +84,7 @@ const BuildComponent = () => {
 
         try {
             const model = genAI.getGenerativeModel({
-                model: "models/gemini-1.5-flash",
+                model: "models/gemini-1.5-pro",
                 generationConfig: {
                     responseMimeType: "application/json",
                 },
@@ -112,7 +112,7 @@ const BuildComponent = () => {
             const duration = endTime - startTime;
 
 
-            const mergedFiles={...Lookup.DEFAULT_FILE,...structuredResponse?.files}
+            const mergedFiles = { ...Lookup.DEFAULT_FILE, ...structuredResponse?.files }
 
             setFiles(mergedFiles);
 
@@ -186,9 +186,9 @@ const BuildComponent = () => {
                                 </div>
                             )
                         }
-                        
+
                         <div className="p-3 max-w-3xl w-full flex justify-center items-center min-w-3xl">
-                            
+
                             <div className="space-y-4">
                                 {/* Header */}
                                 {
@@ -206,7 +206,7 @@ const BuildComponent = () => {
                                         </div>
                                     )
                                 }
-                               
+
                                 {/* Search Input */}
                                 {
                                     !showCodebase && (
@@ -233,6 +233,28 @@ const BuildComponent = () => {
                                                                         </div>
                                                                         <div className="pt-2">
                                                                             <span className="text-sm">{chat.response.explanation}</span>
+                                                                            <div className="pt-2"></div>
+                                                                        </div>
+                                                                        <div className="flex flex-row items-center gap-2">
+                                                                            <Code className="h-5 w-5 text-[#20B8CD]" />
+                                                                            <h2 className="text-xl">Generated Files:</h2>
+                                                                        </div>
+                                                                        <div className="pt-2">
+                                                                            <div className="w-[50%] border rounded-md p-1 bg-muted/50">
+                                                                               <div className="text-sm flex gap-1 flex-col">
+                                                                                {chat.response.generatedFiles.map((file, index) => (
+                                                                                    <div className="flex text-sm items-center gap-1">
+                                                                                       <Check className="text-green-700 h-5 w-5" /> Generated
+                                                                                        <div key={index} className="text-sm border p-1 bg-[#20B8CD]/20 w-fit rounded-md">
+                                                                                        {file}
+                                                                                    </div>  
+                                                                                    </div>
+                                                                                    
+                                                                                ))}
+                                                                            </div> 
+                                                                            </div>
+                                                                            
+                                                                            <div className="pt-2"></div>
                                                                         </div>
                                                                         <div className="flex flex-row justify-between items-end">
                                                                             <div className="pt-4 flex flex-row gap-2">
@@ -250,7 +272,6 @@ const BuildComponent = () => {
                                                                                 <h2 className="text-[12px]">Res Time: {chat.responseTime}ms</h2>
                                                                             </div>
                                                                         </div>
-
                                                                     </div>
                                                                     <hr className="border-t mt-4" />
                                                                 </BlurFade>
@@ -300,10 +321,10 @@ const BuildComponent = () => {
                                                 </div>
                                             </div>
                                         </>
-                                        
+
                                     )
                                 }
-                                
+
                             </div>
                         </div>
                     </ResizablePanel>
@@ -324,20 +345,20 @@ const BuildComponent = () => {
                                         </div>
 
                                         <SandpackProvider template="react" theme={"dark"}
-                                        files={files}
-                                        customSetup={
-                                            {
-                                                dependencies:{
-                                                    ...Lookup.DEPENDANCY
+                                            files={files}
+                                            customSetup={
+                                                {
+                                                    dependencies: {
+                                                        ...Lookup.DEPENDANCY
+                                                    }
                                                 }
                                             }
-                                        }
-                                        options={
-                                            {
-                                                externalResources: ['https://cdn.tailwindcss.com']
+                                            options={
+                                                {
+                                                    externalResources: ['https://cdn.tailwindcss.com']
+                                                }
                                             }
-                                        }
-                                        key={JSON.stringify(files)}
+                                            key={JSON.stringify(files)}
                                         >
                                             <SandpackLayout style={{ borderRadius: '0', borderLeft: '0', borderBottom: '0' }} >
                                                 <TabsContent value="code" className='flex w-full'>

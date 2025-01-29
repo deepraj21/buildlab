@@ -31,7 +31,7 @@ const Auth = () => {
                 <li>Create your team and use @ai</li>
                 <li>Build React Projects with ai</li>
                 <li>Projects supports codeEditor</li>
-                <li>Feeds on Explore Section</li>
+                {/* <li>Feeds on Explore Section</li> */}
               </ol>
             </div>
           </div>

@@ -73,7 +73,7 @@ const AboutBuildLab = () => {
                 new
               </span>
             </li>
-            <li>Explore the Updated Tech Feeds</li>
+            {/* <li>Explore the Updated Tech Feeds</li> */}
             <li>Create a Private Space</li>
             <li>Add/Remove Collaborators and chat</li>
             <li>AI included in chat</li>
