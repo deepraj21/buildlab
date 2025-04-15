@@ -1,5 +1,7 @@
 # BuildLab
 
+<!-- GitAds-Verify: CU9FXWCWUTXB1OF7U2FVP7OUD1YR4HCC -->
+
 <p align="left">
     <img src="https://img.shields.io/badge/version-0.0.2-brightgreen?style=for-the-badge&logo=appveyor" alt="version">
     <a href="./app/client/android/app/release/BuildLab.apk">
