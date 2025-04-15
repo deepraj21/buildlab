@@ -1,6 +1,7 @@
 # BuildLab
 
-<!-- GitAds-Verify: CU9FXWCWUTXB1OF7U2FVP7OUD1YR4HCC -->
+## GitAds Sponsored
+[![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=deepraj21/buildlab@github)](https://gitads.dev/v1/ad-track?source=deepraj21/buildlab@github)
 
 <p align="left">
     <img src="https://img.shields.io/badge/version-0.0.2-brightgreen?style=for-the-badge&logo=appveyor" alt="version">
